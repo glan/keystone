@@ -1,6 +1,5 @@
-[
-  {
-    "id": "472fea82-df06-4132-b9fa-994bac8c7e84",
+{
+  "472fea82-df06-4132-b9fa-994bac8c7e84": {
     "name": "Tranform X",
     "x": 10,
     "y": 50,
@@ -13,15 +12,15 @@
       "4e017600-d1e7-4050-ae81-1834eca98b29",
       "d55a2645-ebfa-4ae3-aad4-2ae3d2072c6d"
     ]
-  },{
-    "id": "674f707a-fa18-4d9e-92d0-a47f28cadcef",
+  },
+  "674f707a-fa18-4d9e-92d0-a47f28cadcef": {
     "name": "Tranform Y",
     "x": 180,
     "y": 200,
     "srcStreams": ["d55a2645-ebfa-4ae3-aad4-2ae3d2072c6d"],
     "destStreams": ["c9fc223f-fe3e-4c5e-a28d-94af0c090e80"]
-  },{
-    "id": "8bf8a0be-e168-4583-9ae4-bacbf243b299",
+  },
+  "8bf8a0be-e168-4583-9ae4-bacbf243b299": {
     "name": "Tranform Z",
     "x": 50,
     "y": 320,
@@ -31,8 +30,8 @@
     "destStreams": [
       "6d255979-83d8-4f4a-833f-907c2b12cb3d"
     ]
-  },{
-    "id": "d5370875-80af-47de-934f-0741ae171ab4",
+  },
+  "d5370875-80af-47de-934f-0741ae171ab4": {
     "name": "Tranform AZ",
     "x": 320,
     "y": 450,
@@ -42,8 +41,7 @@
     ],
     "destStreams": []
   },
-  ,{
-    "id": "cc3dec9c-cc37-4efd-87d7-6ed813cee17c",
+  "cc3dec9c-cc37-4efd-87d7-6ed813cee17c": {
     "name": "Tranform AB",
     "x": 360,
     "y": 20,
@@ -54,4 +52,4 @@
       "2221a111-f350-4a20-8a0d-834dc26ef225"
     ]
   }
-]
+}

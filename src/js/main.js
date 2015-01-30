@@ -7,36 +7,42 @@ var $ = require('jquery'),
     Stream = require('./Stream'),
     dragStart;
 
-    var svg = d3.select('svg');
+    var svg = d3.select('svg'),
+        steamLayer = svg.append("svg:g").classed('steamLayer', true),
+        blockLayer = svg.append("svg:g").classed('blockLayer', true);
 
     var streams = {};
 
     // Create Streams
-    blocks.forEach(function (block) {
+    Object.keys(blocks).forEach(function (blockId) {
+        var block = blocks[blockId];
+        // Assign ID from key
+        block.id = blockId;
+        // Create src Streams
         block.srcStreams = block.srcStreams.map(function (streamId, i) {
-            var stream = streams[streamId] = streams[streamId] || new Stream(svg, streamId);
+            var stream = streams[streamId] = streams[streamId] || new Stream(steamLayer, streamId);
             stream.dest = block;
             stream.destN = i;
             stream.destCount = block.srcStreams.length;
             return stream;
         });
+        // Create dest Streams
         block.destStreams = block.destStreams.map(function (streamId, i) {
-            var stream = streams[streamId] = streams[streamId] || new Stream(svg, streamId);
+            var stream = streams[streamId] = streams[streamId] || new Stream(steamLayer, streamId);
             stream.src = block;
             stream.srcN = i;
             stream.srcCount = block.destStreams.length;
             return stream;
         });
-    });
-
-    // Create Blocks
-    blocks.forEach(function (block) {
-        block.element = svg.append("svg:g").attr('data-id', block.id)
+        // Add update method (should be on the block prototype)
+        block.update = function update() {
+            this.element.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
+        }
+        // Create Block elements
+        block.element = blockLayer.append("svg:g").attr('data-id', block.id)
         .on('mousedown', function () {
             var targetId = $(this).data('id'),
-                block = blocks.filter(function (block) {
-                    return (block.id === targetId);
-                })[0];
+                block = blocks[targetId];
             dragStart = {
                 block: block,
                 sx: block.x,
@@ -79,34 +85,32 @@ var $ = require('jquery'),
     });
 
     function updateBlocks() {
-        blocks.forEach(updateBlock);
+        Object.keys(blocks).forEach(function (id) {
+            blocks[id].update();
+        });
     }
 
-    function updateBlock(block) {
-        block.element.attr('transform', 'translate('+block.x+','+block.y+')');
-    }
-
-    function updatePipes() {
+    function updateSteams() {
         Object.keys(streams).forEach(function (id) {
             streams[id].update();
         });
     }
 
     updateBlocks();
-    updatePipes();
+    updateSteams();
 
 
 $(window).on('mousemove', function (event) {
     if (dragStart) {
         dragStart.block.x = dragStart.sx + event.clientX - dragStart.x;
         dragStart.block.y = dragStart.sy + event.clientY - dragStart.y;
-        updateBlock(dragStart.block);
+        dragStart.block.update();
+        // Update connected streams
         dragStart.block.srcStreams
             .concat(dragStart.block.destStreams)
             .forEach(function(stream) {
                 stream.update();
             });
-        //updatePipes();
     }
 });
 
@@ -114,8 +118,3 @@ $(window).on('mouseup', function () {
     // end drag
     dragStart = null;
 });
-
-// function drag () {
-//     if dragStart
-//     window.requestAnimationFrame(drag);
-// }
