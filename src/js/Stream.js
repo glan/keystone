@@ -1,14 +1,15 @@
 'use strict';
 
-function Stream(svg, id) {
+function Stream(collection, id) {
     this.id = id;
+    this.collection = collection;
     // add pipes
-    this.element = svg.append("svg:path").attr({
+    this.element = collection.svg.append("svg:path").attr({
         "fill": "none",
         "stroke": "black",
         "stroke-width": "4"
     });
-    this.element2 = svg.append("svg:path").attr({
+    this.element2 = collection.svg.append("svg:path").attr({
         "fill": "none",
         "stroke": "hsl(49,88.9401%,57.451%)",
         "stroke-width": "2"
@@ -29,6 +30,6 @@ proto.update = function update() {
         t = 'T' + [dx,dy].join(' ');
     this.element.attr('d', [m,q,t].join(' '));
     this.element2.attr('d', [m,q,t].join(' '));
-}
+};
 
 module.exports = Stream;
