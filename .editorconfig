@@ -1,0 +1,22 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+quote_type = auto
+curly_bracket_next_line = false
+spaces_around_operators = hybrid
+spaces_around_brackets = outside
+spaces_in_brackets = false
+
+[src/js/**.js]
+indent_size = 4
+
+[{gulpfile.js,**.json,test/specs/**-TEST.js,**.html,**.hbs,**.less}]
+indent_size = 2
