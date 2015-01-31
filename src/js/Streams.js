@@ -16,7 +16,7 @@ proto.forEach = function forEach(func) {
 };
 
 proto.add = function add(id) {
-    this.streams[id] = this.streams[id] || new Stream(this, id);
+    this.streams[id] = this.streams[id] || new Stream(this);
     return this.streams[id];
 };
 

@@ -25,8 +25,4 @@ proto.get = function get(id) {
     return this.blocks[id];
 };
 
-proto.dragStart = function dragStart(event) {
-    this.emit('dragStart', event);
-};
-
 module.exports = Blocks.constructor = Blocks;
