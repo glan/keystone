@@ -2,8 +2,9 @@
 
 var Stream = require('./Stream');
 
-function Streams(svg) {
-    this.svg = svg;
+function Streams(streamLayer, handleLayer) {
+    this.streamLayer = streamLayer;
+    this.handleLayer = handleLayer;
     this.streams = {};
 }
 

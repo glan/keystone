@@ -1,5 +1,7 @@
 'use strict';
 
+var uuid = require('node-uuid').v4;
+
 function Block(streams, collection, data) {
     this.collection = collection;
     this._data = data;
@@ -13,7 +15,7 @@ function Block(streams, collection, data) {
     this.createStreams();
 
     // setup drag handler
-    var drag = d3.behavior.drag()
+    this.drag = d3.behavior.drag()
         .origin(function() {
             return this;
         }.bind(this))
@@ -26,7 +28,7 @@ function Block(streams, collection, data) {
     // Create Block element
     this.element = collection.svg.append("svg:g")
         .attr('data-id', this.id)
-        .call(drag);
+        .call(this.drag);
     this.element.append("rect")
         .attr({
             x: 0,
@@ -38,57 +40,13 @@ function Block(streams, collection, data) {
             class: "box"
         });
 
-    // Create src handles
-    this.srcStreams.forEach(function (s, i) {
-        this.element.append("circle")
-            .attr({
-                cx: 100 - ((this.srcStreams.length - 1) * 8) + (i * 16),
-                cy: 10,
-                r: 4,
-                class: "input"
-            })
-            .on('mousedown', function (event) {
-                var tail =  this.srcStreams[i].detachDest();
-                //console.log('Detatch stream dest');
-                d3.event.stopPropagation();
-            }.bind(this));
-        }.bind(this));
-
-    // Create dest handles
-    this.destStreams.forEach(function (s, i) {
-        this.element.append("circle")
-            .attr({
-                cx: 100 - (this.destStreams.length * 8) + (i * 16),
-                cy: 90,
-                r: 4,
-                class: "output"
-            })
-            .on('mousedown', function (event) {
-                var tail = this.destStreams[i].detachSrc();
-                //console.log('Detatch stream src');
-                d3.event.stopPropagation();
-            }.bind(this));
-    }.bind(this));
-
-    // Add extra dest handle
-    this.element.append("circle")
-        .attr({
-            cx: 100 + (this.destStreams.length * 8),
-            cy: 90,
-            r: 4,
-            class: "output blank"
-        })
-        .on('mousedown', function (event) {
-            console.log('create new stream with assigned src');
-            d3.event.stopPropagation();
-        });
-
     // Add text
     this.element.append("text")
         .attr({
             x: 100,
             y: 30,
-            class: "title"
+            class: "title",
+            'pointer-events': 'none'
         })
         .text(data.name);
 }
@@ -97,29 +55,89 @@ var proto = Block.prototype;
 
 proto.update = function update() {
     this.element.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
-    this.srcStreams
-        .concat(this.destStreams)
-        .forEach(function (stream) {
-            stream.update();
+    this.inputStreams.forEach(function (stream, i) {
+        stream.srcHandle.update({
+            x: this.x + 100 - ((this.inputStreams.length - 1) - (i * 2)) * 8,
+            y: this.y + 10
         });
+    }.bind(this));
+    this.outputStreams.forEach(function (stream, i) {
+        stream.destHandle.update({
+            x: this.x + 100 - ((this.outputStreams.length - 1) - (i * 2)) * 8,
+            y: this.y + 90
+        });
+    }.bind(this));
+};
+
+proto.updateStreams = function updateStreams() {
+
+    var newStream;
+
+    // if all output streams have dests then create blank output
+    if (this.outputStreams.every(function (stream) {
+        return (stream.dest);
+    })) {
+        newStream = this._streams.add(uuid());
+        this.outputStreams.push(newStream);
+        newStream.src = this;
+        newStream.srcHandle._linkedHandle = newStream.destHandle;
+        newStream.srcHandle.update();
+    }
+
+    this.update();
+
+    // if (newStream) {
+    //     newStream.destHandle.update(newStream.src);
+    //     this.update();
+    // }
+
+    // Remove all handles
+    // this.element.selectAll("circle").remove();
+    // Create src handles
+    // this.inputStreams.forEach(function (s, i) {
+    //     this.element.append("circle")
+    //         .attr({
+    //             cx: 100 - ((this.inputStreams.length - 1) * 8) + (i * 16),
+    //             cy: 10,
+    //             r: 4,
+    //             class: "input"
+    //         })
+    //         .on('mousedown', function (event) {
+    //             var handle = this.inputStreams[i].detachDest();
+    //             this.updateStreams();
+    //             d3.event.stopPropagation();
+    //         }.bind(this));
+    //     }.bind(this));
+
+    // Create dest handles
+    // this.outputStreams.forEach(function (s, i) {
+    //     this.element.append("circle")
+    //         .attr({
+    //             cx: 100 - ((this.outputStreams.length - 1) * 8) + (i * 16),
+    //             cy: 90,
+    //             r: 4,
+    //             class: "output"
+    //         })
+    //         .on('mousedown', function (event) {
+    //             var handle = this.outputStreams[i].detachSrc();
+    //             this.updateStreams();
+    //             d3.event.stopPropagation();
+    //         }.bind(this));
+    // }.bind(this));
 };
 
 proto.createStreams = function createStreams() {
     // Create src Streams
-    this.srcStreams = this._data.srcStreams.map(function (streamId, i) {
+    this.inputStreams = this._data.inputStreams.map(function (streamId, i) {
         var stream = this._streams.add(streamId);
         stream.dest = this;
-        stream.destN = i;
-        stream.destCount = this._data.srcStreams.length;
         return stream;
     }.bind(this));
 
     // Create dest Streams
-    this.destStreams = this._data.destStreams.map(function (streamId, i) {
+    this.outputStreams = this._data.outputStreams.map(function (streamId, i) {
         var stream = this._streams.add(streamId);
         stream.src = this;
-        stream.srcN = i;
-        stream.srcCount = this._data.destStreams.length;
         return stream;
     }.bind(this));
 };
