@@ -2,19 +2,16 @@
 
 var Stream = require('./Stream');
 
-function Streams(streamLayer, handleLayer) {
-    this.streamLayer = streamLayer;
-    this.handleLayer = handleLayer;
+function Streams(canvas) {
+    this.canvas = canvas;
     this.streams = {};
 }
 
 var proto = Streams.prototype;
 
 proto.clear = function clear() {
-    this.streamLayer.selectAll('path').remove();
-    this.handleLayer.selectAll('circle').remove();
     this.streams = {};
-}
+};
 
 proto.forEach = function forEach(func) {
     return Object.keys(this.streams).forEach(function (id, i) {
@@ -23,7 +20,7 @@ proto.forEach = function forEach(func) {
 };
 
 proto.add = function add(id) {
-    this.streams[id] = this.streams[id] || new Stream(this, id);
+    this.streams[id] = this.streams[id] || new Stream(this.canvas, id);
     return this.streams[id];
 };
 

@@ -1,15 +1,16 @@
 'use strict';
 
-var uuid = require('node-uuid').v4,
+var d3 = require('d3'),
+    $ = require('jquery'),
+    uuid = require('node-uuid').v4,
     drag = require('./drag');
 
 
-function Block(streams, collection, data) {
-    this.collection = collection;
+function Block(canvas, streams, data) {
     this._data = data;
     this._streams = streams;
 
-    this.name = data.name;
+    this._name = data.name;
     this.id = data.id;
     this.x = data.x;
     this.y = data.y;
@@ -26,10 +27,14 @@ function Block(streams, collection, data) {
             this.x = d3.event.x;
             this.y = d3.event.y;
             this.update();
-        }.bind(this));
+        }.bind(this))
+        .on('dragend', function () {
+            // TODO save state here
+            window.save();
+        });
 
     // Create Block element
-    this.element = collection.svg.append("svg:g")
+    this.element = canvas.blockLayer.append("svg:g")
         .attr('data-id', this.id)
         .call(this.drag);
     this.element.append("rect")
@@ -41,7 +46,12 @@ function Block(streams, collection, data) {
             rx: 15,
             ry: 15,
             class: "box"
-        });
+        })
+        .on('mousedown', function () {
+            canvas.blockLayer.selectAll('.active').classed('active', false);
+            this.element.classed('active', true);
+            $('.block-conf input').data('id', this.id).val(this.name);
+        }.bind(this));
 
     // Add text
     this.element.append("text")
@@ -72,7 +82,6 @@ var proto = Block.prototype;
 
 proto.pack = function pack() {
     return {
-        //id: this.id,
         name: this.name,
         x: this.x,
         y: this.y,
@@ -120,7 +129,6 @@ proto.updateStreams = function updateStreams() {
     }
 
     this.update();
-
 };
 
 proto.createStreams = function createStreams() {
@@ -139,9 +147,17 @@ proto.createStreams = function createStreams() {
     }.bind(this));
 };
 
-proto.attachStream = function attachStream(stream) {
-    // TODO
-    // check for open end of stream
-};
+Object.defineProperties(proto, {
+    'name': {
+        get: function () {
+            return this._name;
+        },
+        set: function (name) {
+            this._name = name;
+            this.element.select("text").text(this.name);
+            window.save();
+        }
+    }
+});
 
 module.exports = Block;

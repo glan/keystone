@@ -1,7 +1,7 @@
 'use strict';
 
 var d3 = require('d3'),
-drag = require('./drag');
+    drag = require('./drag');
 
 function Handle(svg, stream, type, linkedHandle) {
     this.stream = stream;
@@ -29,6 +29,8 @@ function Handle(svg, stream, type, linkedHandle) {
                 this.stream.remove();
             }
             drag.activeHandle = null;
+            // TODO save state here
+            window.save();
         }.bind(this));
 
     this.element = svg.append("circle")
@@ -37,14 +39,13 @@ function Handle(svg, stream, type, linkedHandle) {
             class: type
         })
         .call(this.drag);
-    //this.block = (type === 'input') ? stream.dest : (type === 'output') ? stream.src : null;
 }
 
 var proto = Handle.prototype;
 
 proto.remove = function remove() {
     this.element.remove();
-}
+};
 
 proto.update = function update(obj) {
     if (obj) {

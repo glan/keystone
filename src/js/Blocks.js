@@ -1,17 +1,15 @@
 'use strict';
 
 var Block = require('./Block'),
+    Streams = require('./Streams'),
     EventEmitter = require('events').EventEmitter;
 
-function Blocks(svg, streams, blocks) {
-    svg.selectAll("g").remove();
-    streams.clear();
-    this.svg = svg;
-    this.streams = streams;
+function Blocks(canvas, blocks) {
+    var streams = new Streams(canvas);
     this.blocks = blocks || {};
     Object.keys(this.blocks).forEach(function (key) {
         this.blocks[key].id = key;
-        this.blocks[key] = new Block(streams, this, this.blocks[key]);
+        this.blocks[key] = new Block(canvas, streams, this.blocks[key]);
     }.bind(this));
     this.forEach(function (block) {
         block.updateStreams();

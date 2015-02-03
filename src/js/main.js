@@ -1,14 +1,11 @@
 'use strict';
 
-var d3 = require('d3'),
-    Streams = require('./Streams'),
+var $ = require('jquery'),
+    defaultBlocks = require('../data/blocks'),
+    Canvas = require('./Canvas'),
     Blocks = require('./Blocks'),
-    svg = d3.select('svg'),
-    streamLayer = svg.append("svg:g").classed('streamLayer', true),
-    blockLayer = svg.append("svg:g").classed('blockLayer', true),
-    handleLayer = svg.append("svg:g").classed('handleLayer', true),
-    streams = new Streams(streamLayer, handleLayer),
-    blocks = new Blocks(blockLayer, streams, require('../data/blocks'));
+    canvas = new Canvas(),
+    blocks;
 
 
 window.save = function save() {
@@ -16,6 +13,26 @@ window.save = function save() {
 };
 
 window.load = function load() {
-    blocks = new Blocks(blockLayer, streams,
-        JSON.parse(window.localStorage.getItem('keystone-data')));
+    var data;
+    try {
+        data = JSON.parse(window.localStorage.getItem('keystone-data'));
+    } catch (e) {
+    }
+    if (!data) {
+        data = require('../data/blocks');
+    }
+    blocks = new Blocks(canvas, data);
 };
+
+window.load();
+
+$('.block-conf').on('submit', function () {
+    return false;
+});
+
+$('.block-conf input').on('keyup', function () {
+    var id = $(this).data('id');
+    if (id) {
+        blocks.get(id).name = this.value;
+    }
+});

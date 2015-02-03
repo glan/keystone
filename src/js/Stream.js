@@ -2,22 +2,21 @@
 
 var Handle = require('./Handle');
 
-function Stream(collection, id) {
-    this.collection = collection;
+function Stream(canvas, id) {
     this.id = id;
     // add pipes
-    this.element = collection.streamLayer.append("svg:path").attr({
+    this.element = canvas.streamLayer.append("svg:path").attr({
         "fill": "none",
         "stroke": "black",
         "stroke-width": "4"
     });
-    this.element2 = collection.streamLayer.append("svg:path").attr({
+    this.element2 = canvas.streamLayer.append("svg:path").attr({
         "fill": "none",
         "stroke": "hsl(49,88.9401%,57.451%)",
         "stroke-width": "2"
     });
-    this.destHandle = new Handle(collection.handleLayer, this, 'output');
-    this.srcHandle = new Handle(collection.handleLayer, this, 'input');
+    this.destHandle = new Handle(canvas.handleLayer, this, 'output');
+    this.srcHandle = new Handle(canvas.handleLayer, this, 'input');
 }
 
 var proto = Stream.prototype;
@@ -77,7 +76,7 @@ proto.attachDest = function attachDest(block, offset) {
     this.destHandle._linkedHandle = null;
     this.detachDest().inputStreams.splice(pos, 0, this);
     return this;
-}
+};
 
 proto.attachSrc = function attachSrc(block, offset) {
     var pos = Math.round(((block.outputStreams.length - 1) * 5 + offset) / 10);
@@ -86,7 +85,7 @@ proto.attachSrc = function attachSrc(block, offset) {
     this.src = block;
     this.detachSrc().outputStreams.splice(pos, 0, this);
     return this;
-}
+};
 
 proto.updateStreams = function updateStreams() {
     if (this.src) {
@@ -95,6 +94,6 @@ proto.updateStreams = function updateStreams() {
     if (this.dest) {
         this.dest.updateStreams();
     }
-}
+};
 
 module.exports = Stream;
