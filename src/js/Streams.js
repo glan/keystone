@@ -10,6 +10,12 @@ function Streams(streamLayer, handleLayer) {
 
 var proto = Streams.prototype;
 
+proto.clear = function clear() {
+    this.streamLayer.selectAll('path').remove();
+    this.handleLayer.selectAll('circle').remove();
+    this.streams = {};
+}
+
 proto.forEach = function forEach(func) {
     return Object.keys(this.streams).forEach(function (id, i) {
         return func.call(this.streams[id], this.streams[id], i, this.streams);
@@ -17,7 +23,7 @@ proto.forEach = function forEach(func) {
 };
 
 proto.add = function add(id) {
-    this.streams[id] = this.streams[id] || new Stream(this);
+    this.streams[id] = this.streams[id] || new Stream(this, id);
     return this.streams[id];
 };
 

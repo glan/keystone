@@ -1,12 +1,15 @@
 'use strict';
 
-var uuid = require('node-uuid').v4;
+var uuid = require('node-uuid').v4,
+    drag = require('./drag');
+
 
 function Block(streams, collection, data) {
     this.collection = collection;
     this._data = data;
     this._streams = streams;
 
+    this.name = data.name;
     this.id = data.id;
     this.x = data.x;
     this.y = data.y;
@@ -49,9 +52,42 @@ function Block(streams, collection, data) {
             'pointer-events': 'none'
         })
         .text(data.name);
+
+    this.element.select('.box').on('mousemove', function () {
+        var offset;
+        if (drag.activeHandle) {
+            offset = d3.event.offsetX - this.x - 100;
+            drag.activeHandle.attach(this, offset);
+        }
+    }.bind(this));
+
+    this.element.select('.box').on('mouseleave', function () {
+        if (drag.activeHandle) {
+            drag.activeHandle.detach(this);
+        }
+    }.bind(this));
 }
 
 var proto = Block.prototype;
+
+proto.pack = function pack() {
+    return {
+        //id: this.id,
+        name: this.name,
+        x: this.x,
+        y: this.y,
+        inputStreams: this.inputStreams
+            .filter(function (s) {
+                return (s.src);
+            })
+            .map(function (s) { return s.id; }),
+        outputStreams: this.outputStreams
+            .filter(function (s) {
+                return (s.dest);
+            })
+            .map(function (s) { return s.id; })
+    };
+};
 
 proto.update = function update() {
     this.element.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
@@ -80,50 +116,11 @@ proto.updateStreams = function updateStreams() {
         newStream = this._streams.add(uuid());
         this.outputStreams.push(newStream);
         newStream.src = this;
-        newStream.srcHandle._linkedHandle = newStream.destHandle;
-        newStream.srcHandle.update();
+        newStream.destHandle._linkedHandle = newStream.srcHandle;
     }
 
     this.update();
 
-    // if (newStream) {
-    //     newStream.destHandle.update(newStream.src);
-    //     this.update();
-    // }
-
-    // Remove all handles
-    // this.element.selectAll("circle").remove();
-    // Create src handles
-    // this.inputStreams.forEach(function (s, i) {
-    //     this.element.append("circle")
-    //         .attr({
-    //             cx: 100 - ((this.inputStreams.length - 1) * 8) + (i * 16),
-    //             cy: 10,
-    //             r: 4,
-    //             class: "input"
-    //         })
-    //         .on('mousedown', function (event) {
-    //             var handle = this.inputStreams[i].detachDest();
-    //             this.updateStreams();
-    //             d3.event.stopPropagation();
-    //         }.bind(this));
-    //     }.bind(this));
-
-    // Create dest handles
-    // this.outputStreams.forEach(function (s, i) {
-    //     this.element.append("circle")
-    //         .attr({
-    //             cx: 100 - ((this.outputStreams.length - 1) * 8) + (i * 16),
-    //             cy: 90,
-    //             r: 4,
-    //             class: "output"
-    //         })
-    //         .on('mousedown', function (event) {
-    //             var handle = this.outputStreams[i].detachSrc();
-    //             this.updateStreams();
-    //             d3.event.stopPropagation();
-    //         }.bind(this));
-    // }.bind(this));
 };
 
 proto.createStreams = function createStreams() {

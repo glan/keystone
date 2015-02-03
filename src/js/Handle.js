@@ -1,11 +1,12 @@
 'use strict';
 
-var d3 = require('d3');
+var d3 = require('d3'),
+drag = require('./drag');
 
 function Handle(svg, stream, type, linkedHandle) {
     this.stream = stream;
-    this._x = 0;
-    this._y = 0;
+    this.x = 0;
+    this.y = 0;
     this._linkedHandle = linkedHandle;
     this.type = type;
 
@@ -14,28 +15,20 @@ function Handle(svg, stream, type, linkedHandle) {
             return this;
         }.bind(this))
         .on("dragstart", function () {
-            //this.detach();
             svg.style('pointer-events', 'none');
-            d3._handleDrag = this;
+            drag.activeHandle = this;
         }.bind(this))
-        // .on("drag", function () {
-        //     // if hover over block attach
-        //
-        //     // d3.selectAll('svg g.blockLayer g rect').on('mousemover', function (a) {
-        //     //     console.log(a);
-        //     // });
-        //     this.update(d3.event);
-        //     return d3.event;
-        // }.bind(this))
+        .on("drag", function () {
+            this.update(d3.event);
+        }.bind(this))
         .on("dragend", function () {
-            // if over block
             svg.style('pointer-events', 'auto');
             if (this.block) {
                this.block.update();
             } else {
                 this.stream.remove();
             }
-            d3._handleDrag = null;
+            drag.activeHandle = null;
         }.bind(this));
 
     this.element = svg.append("circle")
@@ -58,21 +51,30 @@ proto.update = function update(obj) {
         this.x = obj.x;
         this.y = obj.y;
     }
-    //console.log(this.x);
     this.element.attr({
         cx: this.x,
         cy: this.y
     });
+    if (this._linkedHandle) {
+        this._linkedHandle.update(obj);
+    }
     this.stream.update();
 };
 
 proto.attach = function attach(block, offset) {
     this.block = block;
-    // TODO don't attach if block is same as dest or src
     if (this.type === 'input') {
-        this.stream.attachDest(block, offset).updateStreams();
+        if (this.stream.src !== block) {
+            this.stream.attachDest(block, offset).updateStreams();
+        } else {
+            this.block = null;
+        }
     } else {
-        this.stream.attachSrc(block, offset).updateStreams();
+        if (this.stream.dest !== block) {
+            this.stream.attachSrc(block, offset).updateStreams();
+        } else {
+            this.block = null;
+        }
     }
 };
 
@@ -87,25 +89,5 @@ proto.detach = function detach() {
     }
 };
 
-Object.defineProperties(proto, {
-    'x': {
-        get: function () {
-            return (this._linkedHandle) ? this._linkedHandle.x : this._x;
-        },
-        set: function (x) {
-            this._linkedHandle = null;
-            this._x = x;
-        }
-    },
-    'y': {
-        get: function () {
-            return (this._linkedHandle) ? this._linkedHandle.y : this._y;
-        },
-        set: function (y) {
-            this._linkedHandle = null;
-            this._y = y;
-        }
-    }
-});
 
 module.exports = Handle;

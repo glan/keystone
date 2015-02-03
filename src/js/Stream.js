@@ -2,8 +2,9 @@
 
 var Handle = require('./Handle');
 
-function Stream(collection) {
+function Stream(collection, id) {
     this.collection = collection;
+    this.id = id;
     // add pipes
     this.element = collection.streamLayer.append("svg:path").attr({
         "fill": "none",
@@ -45,6 +46,7 @@ proto.remove = function remove() {
     // detach
     this.detachDest();
     this.detachSrc();
+    // update
     this.updateStreams();
 };
 
@@ -71,6 +73,8 @@ proto.attachDest = function attachDest(block, offset) {
         pos = (pos < 0) ? 0 : (pos > block.inputStreams.length) ? block.inputStreams.length : pos;
 
     this.dest = block;
+    // remove linked handle
+    this.destHandle._linkedHandle = null;
     this.detachDest().inputStreams.splice(pos, 0, this);
     return this;
 }
@@ -92,9 +96,5 @@ proto.updateStreams = function updateStreams() {
         this.dest.updateStreams();
     }
 }
-//
-// proto.attach = function attach(block) {
-//     // TODO
-// };
 
 module.exports = Stream;
