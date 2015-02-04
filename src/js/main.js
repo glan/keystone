@@ -22,6 +22,7 @@ window.load = function load() {
         data = require('../data/blocks');
     }
     blocks = new Blocks(canvas, data);
+    canvas.resize();
 };
 
 window.load();

@@ -1,7 +1,35 @@
+body {
+  margin: 0;
+  font-family: helvetica, 'Lucida Grande', sans-serif;
+  font-size: 12px;
+}
+
+.pane-set {
+  position: fixed;
+  top: 0; left: 0;
+  bottom: 0; right: 0;
+  .pane-main {
+    position: absolute;
+    top: 0; left: 0;
+    right: 240px; bottom: 0;
+    overflow: scroll;
+  }
+  .pane-side {
+    position: absolute;
+    top: 0;
+    right: 0; bottom: 0;
+    width: 240px;
+    overflow: scroll;
+    background: #EEE;
+    border-left: 1px solid #777;
+  }
+}
+
 svg {
-  background: #777;
   cursor: pointer;
   -webkit-user-select: none;
+  background: repeating-linear-gradient(90deg, rgba(200,200,200,0.2) 0px, rgba(200,200,200,0.2) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 50px) 0 0, repeating-linear-gradient(180deg, rgba(200,200,200,0.2) 0px, rgba(200,200,200,0.2) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 50px) 0 0;
+  background-color: #777;
 }
 svg .input {
   fill: green;
@@ -32,7 +60,30 @@ svg g.active rect.box {
 }
 
 .block-conf {
-  position: absolute;
-  top: 20px;
-  left: 640px;
+  padding: 20px;
+  margin: 0;
+  label {
+    font-size: 12px;
+    font-weight: bold;
+    &:after {
+      content: ':';
+    }
+  }
+}
+
+header {
+  width: 100%;
+  height: 22px;
+  border-top: 1px solid #282828;
+  border-bottom: 1px solid #282828;
+  background: linear-gradient(#4a4a4a 1px, #3b3b3b 1px, #373737);
+  color: #CCC;
+  display: -webkit-flex;
+  .name {
+    padding: 4px 10px;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #111;
+    line-height: 15px;
+    color: #EEE;
+  }
 }

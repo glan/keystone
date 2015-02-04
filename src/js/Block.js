@@ -27,6 +27,7 @@ function Block(canvas, streams, data) {
             this.x = d3.event.x;
             this.y = d3.event.y;
             this.update();
+            canvas.resize();
         }.bind(this))
         .on('dragend', function () {
             // TODO save state here
