@@ -5,7 +5,7 @@ var $ = require('jquery'),
 
 function Canvas() {
 
-    this.svg = d3.select('svg');
+    this.svg = d3.select('svg.main');
     this.zoomLayer = this.svg.append("svg:g").classed('zoomLayer', true);
     this.grid = this.zoomLayer.append('rect')
         .attr({
@@ -15,6 +15,8 @@ function Canvas() {
             height: 2000
         })
         .attr('fill', 'url(#grid)');
+    this.blur = d3.select('svg.blur');
+    this.blurUse = d3.select('svg.blur use');
     this.streamLayer = this.zoomLayer.append("svg:g").classed('streamLayer', true);
     this.blockLayer = this.zoomLayer.append("svg:g").classed('blockLayer', true);
     this.handleLayer = this.zoomLayer.append("svg:g").classed('handleLayer', true);
@@ -24,10 +26,10 @@ function Canvas() {
     this.y = window.localStorage.getItem('keystone-data-canvas-y') || 0;
 
     this.svg.on('mousedown', function () {
-        if (d3.event.target === this.svg[0][0]) {
+        //if (d3.event.target === this.svg[0][0]) {
             this.svg.selectAll('.active').classed('active', false);
             $('.block-conf input').data('id', '').val('');
-        }
+        //}
     }.bind(this));
 
     $(window).on('resize', this.resize.bind(this));
@@ -72,6 +74,10 @@ proto.resize = function resize() {
         'width': container.width,
         'height': container.height
     });
+    this.blur.attr({
+        'height': container.height
+    });
+    this.blurUse.attr('transform', 'translate(' + (240-container.width) + ',0)');
 };
 
 module.exports = Canvas;

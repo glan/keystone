@@ -2,9 +2,10 @@
 <link rel="stylesheet" media="all" href="./dist/app.dev.css"/ >
 <body class="pane-set">
     <div class="pane-main">
-      <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <svg class="main" id="main-canvas" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <defs>
           <pattern id="grid" x="0" y="0" width="0.025" height="0.025">
+            <rect fill="#777" x="0" y="0" width="50" height="50"/>
             <line x1="0" y1="0" x2="50" y2="0" stroke="rgba(240,240,240,0.6)" stroke-width="1"/>
             <line x1="0" y1="0" x2="0" y2="50" stroke="rgba(240,240,240,0.6)" stroke-width="1"/>
           </pattern>
@@ -20,6 +21,9 @@
 
       </svg>
     </div>
+    <svg class="blur" width="240" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <use xlink:href="#main-canvas"></use>
+    </svg>
     <div class="pane-side">
       <header><span class="name">Properties</span></header>
       <form class="block-conf">
