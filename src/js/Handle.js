@@ -17,6 +17,7 @@ function Handle(svg, stream, type, linkedHandle) {
         .on("dragstart", function () {
             svg.style('pointer-events', 'none');
             drag.activeHandle = this;
+            d3.event.sourceEvent.stopPropagation(); // silence other listeners
         }.bind(this))
         .on("drag", function () {
             this.update(d3.event);

@@ -23,11 +23,13 @@ function Block(canvas, streams, data) {
         .origin(function() {
             return this;
         }.bind(this))
+        .on("dragstart", function () {
+            d3.event.sourceEvent.stopPropagation(); // silence other listeners
+        })
         .on("drag", function () {
             this.x = d3.event.x;
             this.y = d3.event.y;
             this.update();
-            canvas.resize();
         }.bind(this))
         .on('dragend', function () {
             // TODO save state here
@@ -67,7 +69,7 @@ function Block(canvas, streams, data) {
     this.element.select('.box').on('mousemove', function () {
         var offset;
         if (drag.activeHandle) {
-            offset = d3.event.offsetX - this.x - 100;
+            offset = d3.event.offsetX - this.x - 100 - canvas.x;
             drag.activeHandle.attach(this, offset);
         }
     }.bind(this));
