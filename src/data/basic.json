@@ -1,0 +1,69 @@
+[
+  {
+    "name": "concat",
+    "type": "static",
+    "inputs": "concat"
+  }, {
+    "name": "range",
+    "type": "static",
+    "inputs": "none",
+    "args": [
+      {
+        "name": "from",
+        "type": "int"
+      }, {
+        "name": "count",
+        "type": "int"
+      }
+    ]
+  }, {
+    "name": "delay",
+    "inputs": "merge",
+    "args": [
+      {
+        "name": "ms",
+        "type": "int"
+      }
+    ]
+  }, {
+    "name": "map",
+    "inputs": "merge",
+    "args": [
+      {
+        "name": "selector",
+        "type": "function"
+      }
+    ]
+  }, {
+    "name": "reduce",
+    "inputs": "merge",
+    "args": [
+      {
+        "name": "accumulator",
+        "type": "function"
+      },
+      {
+        "name": "seed",
+        "type": "any"
+      }
+    ]
+  }, {
+    "name": "filter",
+    "inputs": "merge",
+    "args": [
+      {
+        "name": "predicate",
+        "type": "function"
+      }
+    ]
+  }, {
+    "name": "take",
+    "inputs": "merge",
+    "args": [
+      {
+        "name": "count",
+        "type": "int"
+      }
+    ]
+  }
+]

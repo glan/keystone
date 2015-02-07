@@ -2,9 +2,16 @@
 
 var $ = require('jquery'),
     defaultBlocks = require('../data/blocks'),
+    modules = require('../data/basic'),
     Canvas = require('./Canvas'),
+    SidePanel = require('./SidePanel'),
+    Props = require('./Props'),
+    Library = require('./Library'),
     Blocks = require('./Blocks'),
-    canvas = new Canvas(),
+    canvas = new Canvas($('body')),
+    sidePanel = new SidePanel($('body')),
+    props = new Props(sidePanel.$element),
+    library = new Library(sidePanel.$element, modules),
     blocks;
 
 

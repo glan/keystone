@@ -1,9 +1,12 @@
 'use strict';
 
-var $ = require('jquery'),
+var template = require('../templates/canvas.hbs'),
+    $ = require('jquery'),
     d3 = require('d3');
 
-function Canvas() {
+function Canvas(element) {
+
+    this.$element = $(element).append(template());
 
     this.svg = d3.select('svg.main');
     this.zoomLayer = this.svg.append("svg:g").classed('zoomLayer', true);
@@ -11,8 +14,8 @@ function Canvas() {
         .attr({
             x: 0,
             y: 0,
-            width: 2000,
-            height: 2000
+            width: 4000,
+            height: 4000
         })
         .attr('fill', 'url(#grid)');
     this.blur = d3.select('svg.blur');

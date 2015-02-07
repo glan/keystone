@@ -1,0 +1,42 @@
+svg.main {
+  position: absolute;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  .input {
+    fill: green;
+    stroke: black;
+    stroke-width: 1
+  }
+  .output {
+    fill: red;
+    stroke: black;
+    stroke-width: 1;
+    &.blank {
+      fill: rgba(255,0,0,0.4);
+    }
+  }
+  .title {
+    font-family: Menlo;
+    fill: white;
+    font-size: 12;
+    text-anchor: middle;
+  }
+  g {
+    rect.box {
+      filter: url(#dropshadow);
+      fill-opacity: 0.5;
+    }
+    &.active rect.box {
+      stroke-width: 2;
+      stroke: rgba(50,100,255,0.4);
+    }
+  }
+}
+svg.blur {
+  position: fixed;
+  top: 0;
+  right: 0;
+  -webkit-filter: blur(5px);
+}

@@ -1,0 +1,20 @@
+<svg class="main" id="main-canvas" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <pattern id="grid" x="0" y="0" width="0.0125" height="0.0125">
+      <rect fill="#777" x="0" y="0" width="50" height="50"/>
+      <line x1="0" y1="0" x2="50" y2="0" stroke="rgba(240,240,240,0.6)" stroke-width="1"/>
+      <line x1="0" y1="0" x2="0" y2="50" stroke="rgba(240,240,240,0.6)" stroke-width="1"/>
+    </pattern>
+    <filter id="dropshadow" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+<svg class="blur" width="240" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <use xlink:href="#main-canvas"></use>
+</svg>

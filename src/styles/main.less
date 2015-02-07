@@ -2,60 +2,20 @@ body {
   margin: 0;
   font-family: helvetica, 'Lucida Grande', sans-serif;
   font-size: 12px;
-}
-
-.pane-set {
   position: fixed;
   top: 0; left: 0;
-  bottom: 0; right: 0;
-  .pane-main {
-    position: absolute;
-    top: 0; left: 0;
-    right: 0; bottom: 0;
-  }
-  .pane-side {
-    position: absolute;
-    top: 0;
-    right: 0; bottom: 0;
-    width: 240px;
-    overflow: scroll;
-    background: rgba(240,240,240,0.8);
-    border-left: 1px solid #777;
-  }
+  right: 0; bottom: 0;
 }
 
-svg.main {
-  cursor: pointer;
-  -webkit-user-select: none;
+.pane-side {
+  position: absolute;
+  top: 0;
+  right: 0; bottom: 0;
+  width: 240px;
+  overflow: scroll;
+  background: rgba(240,240,240,0.7);
+  border-left: 1px solid #777;
 }
-svg.main .input {
-  fill: green;
-  stroke: black;
-  stroke-width: 1
-}
-svg.main .output {
-  fill: red;
-  stroke: black;
-  stroke-width: 1;
-  &.blank {
-    fill: rgba(255,0,0,0.4);
-  }
-}
-svg.main .title {
-  font-family: Menlo;
-  fill: white;
-  font-size: 12;
-  text-anchor: middle;
-}
-svg.main g rect.box {
-  filter: url(#dropshadow);
-  fill-opacity: 0.5;
-}
-svg.main g.active rect.box {
-  stroke-width: 2;
-  stroke: rgba(50,100,255,0.4);
-}
-
 
 .block-conf {
   padding: 20px;
@@ -86,10 +46,4 @@ header {
   }
 }
 
-
-svg.blur {
-  position: fixed;
-  top: 0;
-  right: 0;
-  -webkit-filter: blur(5px);
-}
+@import "./canvas";
