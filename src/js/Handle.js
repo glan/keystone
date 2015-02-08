@@ -15,7 +15,9 @@ function Handle(svg, stream, type, linkedHandle) {
             return this;
         }.bind(this))
         .on("dragstart", function () {
-            svg.style('pointer-events', 'none');
+            svg.style({
+                'pointer-events': 'none'
+            });
             drag.activeHandle = this;
             d3.event.sourceEvent.stopPropagation(); // silence other listeners
         }.bind(this))
@@ -23,7 +25,9 @@ function Handle(svg, stream, type, linkedHandle) {
             this.update(d3.event);
         }.bind(this))
         .on("dragend", function () {
-            svg.style('pointer-events', 'auto');
+            svg.style({
+                'pointer-events': 'auto'
+            });
             if (this.block) {
                this.block.update();
             } else {
@@ -57,6 +61,7 @@ proto.update = function update(obj) {
         cx: this.x,
         cy: this.y
     });
+    this.element.classed({'connected': (this.stream.dest) });
     if (this._linkedHandle) {
         this._linkedHandle.update(obj);
     }
@@ -68,8 +73,10 @@ proto.attach = function attach(block, offset) {
     if (this.type === 'input') {
         if (this.stream.src !== block) {
             this.stream.attachDest(block, offset).updateStreams();
+            //this.element.classed({'connected': true });
         } else {
             this.block = null;
+            //this.element.classed({'connected': false });
         }
     } else {
         if (this.stream.dest !== block) {
@@ -85,6 +92,7 @@ proto.detach = function detach() {
     if (this.type === 'input') {
         if (this.stream.dest) {
             this.stream.detachDest().updateStreams();
+            //this.element.classed({'connected': false });
         }
     } else {
         this.stream.detachSrc().updateStreams();
