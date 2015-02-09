@@ -7,6 +7,12 @@ body {
   right: 0; bottom: 0;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .pane-side {
   position: absolute;
   top: 0;
@@ -15,17 +21,26 @@ body {
   overflow: scroll;
   background: rgba(240,240,240,0.7);
   border-left: 1px solid #777;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
 .block-conf {
-  padding: 20px;
-  margin: 0;
+  padding: 5px;
+  margin: 10px 0;
   label {
+    margin-left: 15px;
     font-size: 12px;
     font-weight: bold;
     &:after {
       content: ':';
     }
+  }
+  input[data-type=int] {
+    width: 60px;
+  }
+  fieldset {
+    border: 1px solid #AAA;
+    margin-top: 10px;
   }
 }
 
@@ -47,3 +62,4 @@ header {
 }
 
 @import "./canvas";
+@import "./library";

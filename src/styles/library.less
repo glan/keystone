@@ -1,0 +1,22 @@
+.library {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li {
+      padding: 5px;
+      border: 1px solid #999;
+      margin-bottom: -1px;
+      //cursor: pointer;
+      -webkit-user-select: none;
+      -webkit-user-drag: element;
+      &:active {
+        //cursor: pointer;
+        background: rgba(240, 240, 240, 0.8);
+      }
+      &:before {
+        content: '⊕ ';
+      }
+    }
+  }
+}

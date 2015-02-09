@@ -18,6 +18,7 @@ function Handle(svg, stream, type, linkedHandle) {
             svg.style({
                 'pointer-events': 'none'
             });
+            svg[0][0].parentNode.parentNode.classList.add('activeHandle');
             drag.activeHandle = this;
             d3.event.sourceEvent.stopPropagation(); // silence other listeners
         }.bind(this))
@@ -28,6 +29,7 @@ function Handle(svg, stream, type, linkedHandle) {
             svg.style({
                 'pointer-events': 'auto'
             });
+            svg[0][0].parentNode.parentNode.classList.remove('activeHandle');
             if (this.block) {
                this.block.update();
             } else {

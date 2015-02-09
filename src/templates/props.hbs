@@ -1,9 +1,18 @@
-<div class="props">
-  <header>
-    <span class="name">Properties</span>
-  </header>
-  <form class="block-conf">
-    <label for="bc-name">Name</label>
-    <input type="text" id="bc-name" name="name"/>
-  </form>
-</div>
+<header>
+  <span class="name">Properties</span>
+</header>
+<form class="block-conf">
+  <label for="bc-name">Name</label>
+  <input type="text" id="bc-name" name="name" value="{{name}}" />
+  <fieldset>
+    <legend>Arguments ({{type}})</legend>
+    <ul>
+    {{#each args}}
+      <li>
+        <label for="bc-{{name}}">{{name}}</label>
+        <input type="text" id="bc-{{name}}" name="{{name}}" value="{{value}}" data-type="{{type}}" />
+      </li>
+      {{/each}}
+    </ul>
+  </fieldset>
+</form>

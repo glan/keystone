@@ -2,7 +2,8 @@
   {
     "name": "concat",
     "type": "static",
-    "inputs": "concat"
+    "inputs": "concat",
+    "args": []
   }, {
     "name": "range",
     "type": "static",

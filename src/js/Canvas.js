@@ -25,30 +25,40 @@ function Canvas(element) {
     this.handleLayer = this.zoomLayer.append("svg:g").classed('handleLayer', true);
 
     this.zoom = 1;
-    this.x = window.localStorage.getItem('keystone-data-canvas-x') || 0;
-    this.y = window.localStorage.getItem('keystone-data-canvas-y') || 0;
+    this.x = 1 * window.localStorage.getItem('keystone-data-canvas-x') || 0;
+    this.y = 1 * window.localStorage.getItem('keystone-data-canvas-y') || 0;
 
-    this.svg.on('mousedown', function () {
-        //if (d3.event.target === this.svg[0][0]) {
-            this.svg.selectAll('.active').classed('active', false);
-            $('.block-conf input').data('id', '').val('');
-        //}
-    }.bind(this));
+    // this.svg.on('mousedown', function () {
+    //     // TODO deactivate block
+    //     this.svg.selectAll('.active').classed('active', false);
+    //     $('.block-conf input').data('id', '').val('');
+    // }.bind(this));
 
     $(window).on('resize', this.resize.bind(this));
+
+    $(this.svg[0][0]).on('mousewheel', function (event) {
+        this.x -= 1 * event.originalEvent.deltaX;
+        this.y -= 1 * event.originalEvent.deltaY;
+        this.update();
+    }.bind(this));
+
+    $(this.svg[0][0]).on('selectstart', function () {
+        return false;
+    });
 
     var drag = d3.behavior.drag()
         .origin(function() {
             return this;
         }.bind(this))
         .on("drag", function () {
-            this.x = d3.event.x;
-            this.y = d3.event.y;
+            this.x = 1 * d3.event.x;
+            this.y = 1 * d3.event.y;
             this.update();
         }.bind(this));
 
     this.svg.call(drag);
     this.update();
+
 
 }
 

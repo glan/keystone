@@ -5,7 +5,10 @@ svg.main {
   cursor: -webkit-grab;
   -webkit-user-select: none;
   &:active {
-    cursor: -webkit-grabbing;
+    &.activeHandle {
+      cursor: no-drop;
+    }
+    cursor: all-scroll;
   }
   .handleLayer {
     > * {

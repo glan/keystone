@@ -10,7 +10,12 @@ function Block(canvas, streams, data) {
     this._data = data;
     this._streams = streams;
 
+    this._data.inputStreams = this._data.inputStreams || [];
+    this._data.outputStreams = this._data.outputStreams || [];
+
     this._name = data.name;
+    this.args = data.args || {};
+    this.type = data.type;
     this.id = data.id;
     this.x = data.x;
     this.y = data.y;
@@ -49,22 +54,32 @@ function Block(canvas, streams, data) {
             rx: 15,
             ry: 15,
             class: "box"
-        })
-        .on('mousedown', function () {
-            canvas.blockLayer.selectAll('.active').classed('active', false);
-            this.element.classed('active', true);
-            $('.block-conf input').data('id', this.id).val(this.name);
-        }.bind(this));
+        });
+        // .on('mousedown', function () {
+        //     // TODO active block
+        //     canvas.blockLayer.selectAll('.active').classed('active', false);
+        //     this.element.classed('active', true);
+        //     $('.block-conf input').data('id', this.id).val(this.name);
+        // }.bind(this));
 
     // Add text
     this.element.append("text")
         .attr({
             x: 100,
             y: 30,
-            class: "title",
+            class: "title name",
             'pointer-events': 'none'
         })
         .text(data.name);
+
+    this.element.append("text")
+        .attr({
+            x: 100,
+            y: 50,
+            class: "title type",
+            'pointer-events': 'none'
+        })
+        .text(data.type);
 
     this.element.select('.box').on('mousemove', function () {
         var offset;
@@ -86,6 +101,8 @@ var proto = Block.prototype;
 proto.pack = function pack() {
     return {
         name: this.name,
+        type: this.type,
+        args: this.args,
         x: this.x,
         y: this.y,
         inputStreams: this.inputStreams
@@ -122,7 +139,7 @@ proto.updateStreams = function updateStreams() {
     var newStream;
 
     // if all output streams have dests then create blank output
-    if (this.outputStreams.every(function (stream) {
+    if (this.name && this.outputStreams.every(function (stream) {
         return (stream.dest);
     })) {
         newStream = this._streams.add(uuid());
@@ -150,6 +167,29 @@ proto.createStreams = function createStreams() {
     }.bind(this));
 };
 
+proto.remove = function remove() {
+    // flush the name so we don't add a new blank stream
+    this.name = null;
+    this.inputStreams.forEach(function (stream) {
+        stream.remove();
+    });
+    this.outputStreams.forEach(function (stream) {
+        stream.remove();
+    });
+    this.element.remove();
+};
+
+proto.set = function set(data) {
+    data.forEach(function (obj) {
+        if (obj.name === 'name') {
+            this.name = obj.value;
+        } else {
+            this.args[obj.name] = obj.value;
+        }
+    }.bind(this));
+    window.save();
+};
+
 Object.defineProperties(proto, {
     'name': {
         get: function () {
@@ -157,7 +197,7 @@ Object.defineProperties(proto, {
         },
         set: function (name) {
             this._name = name;
-            this.element.select("text").text(this.name);
+            this.element.select("text.name").text(this.name);
             window.save();
         }
     }

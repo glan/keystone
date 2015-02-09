@@ -2,14 +2,16 @@
 
 var Block = require('./Block'),
     Streams = require('./Streams'),
+    uuid = require('node-uuid').v4,
     EventEmitter = require('events').EventEmitter;
 
 function Blocks(canvas, blocks) {
-    var streams = new Streams(canvas);
+    this.canvas = canvas;
+    this.streams = new Streams(this.canvas);
     this.blocks = blocks || {};
     Object.keys(this.blocks).forEach(function (key) {
         this.blocks[key].id = key;
-        this.blocks[key] = new Block(canvas, streams, this.blocks[key]);
+        this.blocks[key] = new Block(this.canvas, this.streams, this.blocks[key]);
     }.bind(this));
     this.forEach(function (block) {
         block.updateStreams();
@@ -34,6 +36,23 @@ proto.pack = function pack() {
 
 proto.get = function get(id) {
     return this.blocks[id];
+};
+
+proto.add = function add(type, name, x, y) {
+    var id = uuid();
+    this.blocks[id] = new Block(this.canvas, this.streams, {
+        id: id,
+        name: name,
+        type: type,
+        x: x,
+        y: y
+    });
+    this.blocks[id].updateStreams();
+};
+
+proto.remove = function remove(id) {
+    this.blocks[id].remove();
+    delete this.blocks[id];
 };
 
 module.exports = Blocks.constructor = Blocks;
