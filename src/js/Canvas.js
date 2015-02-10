@@ -24,7 +24,7 @@ function Canvas(element) {
     this.blockLayer = this.zoomLayer.append("svg:g").classed('blockLayer', true);
     this.handleLayer = this.zoomLayer.append("svg:g").classed('handleLayer', true);
 
-    this.zoom = 1;
+    this.zoom = 1 * window.localStorage.getItem('keystone-data-canvas-zoom') || 1;
     this.x = 1 * window.localStorage.getItem('keystone-data-canvas-x') || 0;
     this.y = 1 * window.localStorage.getItem('keystone-data-canvas-y') || 0;
 
@@ -69,13 +69,18 @@ proto.clear = function clear() {
 };
 
 proto.update = function update() {
-    var transform = 'translate(' + (this.x) + ',' + (this.y) + ')';
-    this.zoomLayer.attr('transform', transform);
+    var gridSize = 50 * this.zoom;
+    this.zoomLayer.attr('transform', "matrix(" +
+        this.zoom.toFixed(4) + ",0,0," +
+        this.zoom.toFixed(4) + "," +
+        (this.x).toFixed(4) + "," +
+        (this.y).toFixed(4)+")");
+    window.localStorage.setItem('keystone-data-canvas-zoom', this.zoom);
     window.localStorage.setItem('keystone-data-canvas-x', this.x);
     window.localStorage.setItem('keystone-data-canvas-y', this.y);
     this.grid.attr({
-        x: -this.x + (this.x % 50) - 50,
-        y: -this.y + (this.y % 50) - 50
+        x: (-this.x + (this.x % gridSize) - gridSize) / this.zoom,
+        y: (-this.y + (this.y % gridSize) - gridSize) / this.zoom
     });
 }
 
@@ -87,5 +92,20 @@ proto.resize = function resize() {
     });
     this.emit('resize');
 };
+
+Object.defineProperties(proto, {
+    'zoom': {
+        get: function () {
+            return this._zoom;
+        },
+        set: function (zoom) {
+            var dx = this.x / this.zoom,
+                dy = this.y / this.zoom;
+            this._zoom = (zoom > 1.75) ? 1.75 : (zoom < 0.50) ? 0.50 : zoom;
+            this.x = dx * this.zoom;
+            this.y = dy * this.zoom;
+        }
+    }
+});
 
 module.exports = Canvas.constructor = Canvas;

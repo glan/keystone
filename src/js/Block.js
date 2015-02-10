@@ -85,7 +85,7 @@ function Block(canvas, streams, data) {
     this.element.select('.box').on('mousemove', function () {
         var offset;
         if (drag.activeHandle) {
-            offset = d3.event.offsetX - this.x - 100 - canvas.x;
+            offset = d3.event.offsetX - ((this.x + 100) * canvas.zoom) - canvas.x;
             drag.activeHandle.attach(this, offset);
         }
     }.bind(this));

@@ -9,7 +9,7 @@ function Console(element) {
     EventEmitter.call(this);
     this.$element = $(element).append('<div class="console"></div>').find('.console');
     this.$element.append(template());
-    this.height = 320;
+    this.height = 1 * window.localStorage.getItem('keystone-data-console-height') || 320;
     var mouseY;
 
     var dragtrayMove = function(event) {
@@ -19,11 +19,12 @@ function Console(element) {
         return false;
     }.bind(this);
 
-    function dragtrayEnd(event) {
+    var dragtrayEnd = function (event) {
         document.body.style.cursor = '';
         document.removeEventListener('mousemove', dragtrayMove);
         document.removeEventListener('mouseup', dragtrayEnd);
-    }
+        window.localStorage.setItem('keystone-data-console-height', this.height);
+    }.bind(this);
 
     document.querySelector('.console .handle').addEventListener('mousedown', function(event) {
         document.body.style.cursor = 'ns-resize';

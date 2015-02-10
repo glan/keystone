@@ -48,6 +48,7 @@ proto.add = function add(type, name, x, y) {
         y: y
     });
     this.blocks[id].updateStreams();
+    return this.blocks[id];
 };
 
 proto.remove = function remove(id) {

@@ -12,8 +12,12 @@ function Props(element, items) {
     this.$element.on('submit', function () {
         return false;
     });
-    //
+
     this.$element.on('keydown', 'input', function (event) {
+        event.stopPropagation();
+    });
+
+    this.$element.on('keyup', 'input', function (event) {
         this.selected.set(this.$element.find('form').serializeArray());
         event.stopPropagation();
     }.bind(this));
