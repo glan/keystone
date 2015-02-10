@@ -2,7 +2,7 @@ svg.main {
   position: absolute;
   top: 0; left: 0;
   right: 0; bottom: 0;
-  cursor: -webkit-grab;
+  //cursor: -webkit-grab;
   -webkit-user-select: none;
   &:active {
     &.activeHandle {
@@ -54,5 +54,11 @@ svg.blur {
   position: fixed;
   top: 0;
   right: 0;
+  -webkit-filter: blur(5px);
+}
+svg.blur2 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
   -webkit-filter: blur(5px);
 }

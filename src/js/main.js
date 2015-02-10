@@ -1,14 +1,17 @@
 'use strict';
 
 var $ = require('jquery'),
+    d3 = require('d3'),
     defaultBlocks = require('../data/blocks'),
     modules = require('../data/basic'),
     Canvas = require('./Canvas'),
     SidePanel = require('./SidePanel'),
     Props = require('./Props'),
+    ConsoleTray = require('./Console'),
     Library = require('./Library'),
     Blocks = require('./Blocks'),
     canvas = new Canvas($('body')),
+    consoleTray = new ConsoleTray($('body')),
     sidePanel = new SidePanel($('body')),
     props = new Props(sidePanel.$element, modules),
     library = new Library(sidePanel.$element, modules),
@@ -51,7 +54,12 @@ $('#main-canvas').on('dragover', function (event) {
 });
 
 document.getElementById('main-canvas').addEventListener('mousedown', function (event) {
-    var id = event.target.parentNode.getAttribute('data-id');
+    var parent = event.target.parentNode,
+        id;
+
+    if (parent.getAttribute) {
+        id = parent.getAttribute('data-id');
+    }
 
     if (props.selected) {
         props.selected.element.classed('active', false);
@@ -75,3 +83,26 @@ document.addEventListener('keydown', function (event) {
         window.save();
     }
 });
+
+function resize() {
+    var container = document.body.getBoundingClientRect();
+
+    consoleTray.height = (consoleTray.height < 9) ?
+         9 : (consoleTray.height > container.height) ?
+         container.height : consoleTray.height;
+    document.querySelector('.console').style.height = (consoleTray.height) + 'px';
+
+    d3.select('.blur').attr({
+        'height': container.height,
+        'width': props.width,
+    }).select('use').attr('transform', 'translate(' + (props.width - container.width) + ',0)');
+    d3.select('.blur2').attr({
+        'height': consoleTray.height,
+        'width': container.width - props.width
+    }).select('use').attr('transform', 'translate(0,' + (consoleTray.height - container.height) + ')');
+}
+
+resize();
+
+canvas.on('resize', resize);
+consoleTray.on('resize', resize);

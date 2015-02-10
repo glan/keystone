@@ -1,0 +1,33 @@
+.console {
+  position: absolute;
+  height: 320px;
+  left: 0; bottom: 0;
+  right: 240px;
+  background: rgba(240,240,240,0.7);
+  border-top: 1px solid #777;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  .handle {
+    height: 7px;
+    margin-right: 1px;
+    border-top: 1px #555 solid;
+    background-image: -webkit-linear-gradient(top, #333 0, #333 1px, #777 1px, #777 2px, #333 2px, #333 3px, #777 3px, #777 4px);
+    background-repeat: no-repeat;
+    background-size: 25px 4px;
+    background-position: 50% 1px;
+    background-color: #444;
+    cursor: ns-resize;
+  }
+
+  pre {
+    font-family: Menlo;
+    font-size: 11px;
+    line-height: 1.4em;
+    margin: 0;
+    padding: 4px;
+    overflow: scroll;
+    position: absolute;
+    right: 0; top: 8px;
+    left: 0; bottom: 0;
+  //  -webkit-user-select: text;
+  }
+}

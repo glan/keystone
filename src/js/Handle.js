@@ -1,7 +1,7 @@
 'use strict';
 
 var d3 = require('d3'),
-    drag = require('./drag');
+    dragInstance = require('./drag');
 
 function Handle(svg, stream, type, linkedHandle) {
     this.stream = stream;
@@ -10,7 +10,7 @@ function Handle(svg, stream, type, linkedHandle) {
     this._linkedHandle = linkedHandle;
     this.type = type;
 
-    this.drag = d3.behavior.drag()
+    var drag = d3.behavior.drag()
         .origin(function() {
             return this;
         }.bind(this))
@@ -19,7 +19,8 @@ function Handle(svg, stream, type, linkedHandle) {
                 'pointer-events': 'none'
             });
             svg[0][0].parentNode.parentNode.classList.add('activeHandle');
-            drag.activeHandle = this;
+            dragInstance.activeHandle = this;
+            d3.event.sourceEvent.preventDefault(); // prevent the I-Beam;
             d3.event.sourceEvent.stopPropagation(); // silence other listeners
         }.bind(this))
         .on("drag", function () {
@@ -35,7 +36,7 @@ function Handle(svg, stream, type, linkedHandle) {
             } else {
                 this.stream.remove();
             }
-            drag.activeHandle = null;
+            dragInstance.activeHandle = null;
             // TODO save state here
             window.save();
         }.bind(this));
@@ -45,7 +46,7 @@ function Handle(svg, stream, type, linkedHandle) {
             r: 4,
             class: type
         })
-        .call(this.drag);
+        .call(drag);
 }
 
 var proto = Handle.prototype;

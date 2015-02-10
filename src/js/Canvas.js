@@ -1,10 +1,12 @@
 'use strict';
 
 var template = require('../templates/canvas.hbs'),
+    EventEmitter = require('events').EventEmitter,
     $ = require('jquery'),
     d3 = require('d3');
 
 function Canvas(element) {
+    EventEmitter.call(this);
 
     this.$element = $(element).append(template());
 
@@ -18,8 +20,6 @@ function Canvas(element) {
             height: 4000
         })
         .attr('fill', 'url(#grid)');
-    this.blur = d3.select('svg.blur');
-    this.blurUse = d3.select('svg.blur use');
     this.streamLayer = this.zoomLayer.append("svg:g").classed('streamLayer', true);
     this.blockLayer = this.zoomLayer.append("svg:g").classed('blockLayer', true);
     this.handleLayer = this.zoomLayer.append("svg:g").classed('handleLayer', true);
@@ -42,14 +42,13 @@ function Canvas(element) {
         this.update();
     }.bind(this));
 
-    $(this.svg[0][0]).on('selectstart', function () {
-        return false;
-    });
-
     var drag = d3.behavior.drag()
         .origin(function() {
             return this;
         }.bind(this))
+        .on("dragstart", function () {
+            d3.event.sourceEvent.preventDefault();
+        })
         .on("drag", function () {
             this.x = 1 * d3.event.x;
             this.y = 1 * d3.event.y;
@@ -59,10 +58,9 @@ function Canvas(element) {
     this.svg.call(drag);
     this.update();
 
-
 }
 
-var proto = Canvas.prototype;
+var proto = Canvas.prototype = Object.create(EventEmitter.prototype);
 
 proto.clear = function clear() {
     this.blockLayer.selectAll("g").remove();
@@ -82,15 +80,12 @@ proto.update = function update() {
 }
 
 proto.resize = function resize() {
-    var container = this.svg[0][0].parentNode.getBoundingClientRect();
+    var container = document.body.getBoundingClientRect();
     this.svg.attr({
         'width': container.width,
         'height': container.height
     });
-    this.blur.attr({
-        'height': container.height
-    });
-    this.blurUse.attr('transform', 'translate(' + (240-container.width) + ',0)');
+    this.emit('resize');
 };
 
-module.exports = Canvas;
+module.exports = Canvas.constructor = Canvas;

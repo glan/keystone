@@ -29,6 +29,7 @@ function Block(canvas, streams, data) {
             return this;
         }.bind(this))
         .on("dragstart", function () {
+            d3.event.sourceEvent.preventDefault();
             d3.event.sourceEvent.stopPropagation(); // silence other listeners
         })
         .on("drag", function () {

@@ -10,13 +10,8 @@ function Library(element, items) {
     $(element).on('mouseover', 'li', function () {
         document.body.style.cursor = '-webkit-grab';
     })
-    .on('mouseout', 'li', function () {
-        document.body.style.cursor = '';
-    })
-    .on('mousedown', 'li', function () {
-        document.body.style.cursor = '-webkit-grabbing';
-    })
     .on('dragstart', 'li', function (event) {
+        document.body.style.cursor = '-webkit-grabbing';
         event.originalEvent.dataTransfer.setData('application/json',
             JSON.stringify({
                 name: 'Unnamed',
@@ -25,13 +20,13 @@ function Library(element, items) {
                 offsetY: event.originalEvent.offsetY
             })
         );
-        document.body.style.cursor = '-webkit-grabbing';
+        event.originalEvent.dataTransfer.dropEffect = 'copy';
     })
     .on('dragover', function (event) {
         document.body.style.cursor = '-webkit-grabbing';
         event.preventDefault();
     })
-    .on('mouseup', 'li', function () {
+    .on('mouseup', function () {
         document.body.style.cursor = '-webkit-grab';
     });
 }
