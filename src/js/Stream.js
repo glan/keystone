@@ -13,7 +13,8 @@ function Stream(canvas, id) {
     this.element2 = canvas.streamLayer.append("svg:path").attr({
         "fill": "none",
         "stroke": "hsl(49,88.9401%,57.451%)",
-        "stroke-width": "2"
+        "stroke-width": "2",
+        "class": "flow"
     });
     this.destHandle = new Handle(canvas.handleLayer, this, 'output');
     this.srcHandle = new Handle(canvas.handleLayer, this, 'input');

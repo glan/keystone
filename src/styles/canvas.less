@@ -10,6 +10,20 @@ svg.main {
     }
     cursor: all-scroll;
   }
+  .streamLayer {
+    path.flow {
+      stroke-dasharray: 20;
+      /*-webkit-animation: dash 2s linear infinite;*/
+    }
+    @-webkit-keyframes dash {
+      from {
+        stroke-dashoffset: 0;
+      }
+      to {
+        stroke-dashoffset: 160;
+      }
+    }
+  }
   .handleLayer {
     > * {
       cursor: pointer;

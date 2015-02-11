@@ -68,21 +68,36 @@ function selectBlock(id) {
     }
 }
 
-document.getElementById('main-canvas').addEventListener('mousedown', function (event) {
-    var parent = event.target.parentNode,
-        id;
-    if (parent.getAttribute) {
-        id = parent.getAttribute('data-id');
-    }
-    selectBlock(id);
-}, true);
-
 document.addEventListener('keydown', function (event) {
-    if (event.keyCode === 8 && props.selected) {
-        // delete node
-        blocks.remove(props.selected.id);
-        props.selected = null;
-        window.save();
+    var block = props.selected;
+    if (props.selected) {
+        switch (event.keyCode) {
+        case 8: // delete node
+            blocks.remove(block.id);
+            props.selected = null;
+            window.save();
+            break;
+        case 37: // 37 left
+            block.x -= 10;
+            block.update();
+            window.save();
+            break;
+        case 38: // 38 up
+            block.y -= 10;
+            block.update();
+            window.save();
+            break;
+        case 39: // 39 right
+            block.x += 10;
+            block.update();
+            window.save();
+            break;
+        case 40: // 40 down
+            block.y += 10;
+            block.update();
+            window.save();
+            break;
+        }
     }
 });
 
@@ -134,13 +149,15 @@ $(document).on('keyup', function (event) {
     }
 });
 
-$('#main-canvas g.zoomLayer')
+$('#main-canvas')
     .on('contextmenu', function () {
         return false;
-    })
-    .on('mousedown', function (event) {
-        var container = document.body.getBoundingClientRect();
+    })[0].addEventListener('mousedown', function (event) {
+        var container = document.body.getBoundingClientRect(),
+            parent = event.target.parentNode,
+            id;
         if (event.altKey) {
+            // zoom in
             event.preventDefault();
             event.stopPropagation();
             canvas.x -= event.clientX;
@@ -151,6 +168,7 @@ $('#main-canvas g.zoomLayer')
             canvas.update();
             return false;
         } else if (event.ctrlKey) {
+            // zoom out
             event.preventDefault();
             event.stopPropagation();
             canvas.x -= event.clientX;
@@ -160,8 +178,14 @@ $('#main-canvas g.zoomLayer')
             canvas.y += event.clientY;
             canvas.update();
             return false;
+        } else {
+            // select block
+            if (parent.getAttribute) {
+                id = parent.getAttribute('data-id');
+            }
+            selectBlock(id);
         }
-    });
+    }, true);
 
 resize();
 

@@ -7,7 +7,7 @@ function Props(element, items) {
     this.$element = $(element).append('<div class="props"></div>').find('.props');
     this._types = items;
 
-    this.width = 240;
+    this.width = this.$element.width();
 
     this.$element.on('submit', function () {
         return false;
