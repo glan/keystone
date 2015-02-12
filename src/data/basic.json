@@ -1,13 +1,10 @@
 [
   {
     "name": "concat",
-    "type": "static",
-    "inputs": "concat",
+    "inputOp": "concat",
     "args": []
   }, {
     "name": "range",
-    "type": "static",
-    "inputs": "none",
     "args": [
       {
         "name": "from",
@@ -18,8 +15,17 @@
       }
     ]
   }, {
+    "name": "interval",
+    "inputOp": "merge",
+    "args": [
+      {
+        "name": "ms",
+        "type": "int"
+      }
+    ]
+  }, {
     "name": "delay",
-    "inputs": "merge",
+    "inputOp": "merge",
     "args": [
       {
         "name": "ms",
@@ -28,7 +34,7 @@
     ]
   }, {
     "name": "map",
-    "inputs": "merge",
+    "inputOp": "merge",
     "args": [
       {
         "name": "selector",
@@ -37,7 +43,7 @@
     ]
   }, {
     "name": "reduce",
-    "inputs": "merge",
+    "inputOp": "merge",
     "args": [
       {
         "name": "accumulator",
@@ -50,7 +56,7 @@
     ]
   }, {
     "name": "filter",
-    "inputs": "merge",
+    "inputOp": "merge",
     "args": [
       {
         "name": "predicate",
@@ -59,7 +65,7 @@
     ]
   }, {
     "name": "take",
-    "inputs": "merge",
+    "inputOp": "merge",
     "args": [
       {
         "name": "count",

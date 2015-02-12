@@ -48,7 +48,7 @@ $('#main-canvas').on('dragover', function (event) {
     document.body.style.cursor = '-webkit-grab';
     event.stopPropagation();
     event.preventDefault();
-    selectBlock(blocks.add(data.type, data.name,
+    selectBlock(blocks.add(data.type, data.name, data.inputOp,
         (event.originalEvent.clientX - canvas.x) / canvas.zoom - data.offsetX,
         (event.originalEvent.clientY - canvas.y) / canvas.zoom - data.offsetY
     ).id);
@@ -191,3 +191,61 @@ resize();
 
 canvas.on('resize', resize);
 consoleTray.on('resize', resize);
+
+var io = require('socket.io-client');
+
+var server = io.connect('http://localhost:8080');
+
+server.emit('init', 'xxxx');
+
+server.on('output', function(message) {
+    $(document.body).addClass('playing');
+    var json,
+        ele = $('.console pre')[0];
+    if (props.selected) {
+        json = JSON.parse(message);
+        if (json[0] === props.selected.outputStreams[0].id) {
+            $('.console pre').append(message + '<br/>');
+        }
+    } else {
+        $('.console pre').append(message + '<br/>');
+    }
+    ele.scrollTop = ele.scrollHeight;
+});
+
+server.on('exit', function() {
+    $(document.body).removeClass('playing');
+});
+
+server.on('completed', function() {
+    $(document.body).removeClass('playing');
+});
+
+server.on('error', function(message) {
+    console.log('error', message);
+    $(document.body).removeClass('playing');
+});
+
+server.on('exit', function(message) {
+    console.log('exit', message);
+    $(document.body).removeClass('playing');
+});
+
+$('button.clear').on('click', function () {
+    $('.console pre').html('');
+});
+
+$('button.run').on('click', function () {
+    // if (props.selected) {
+        //server.emit('stop');
+        server.emit('upload', {
+            model: JSON.parse(window.localStorage.getItem('keystone-data')),
+            // outputStream: props.selected.outputStreams[0].id
+        });
+    // }
+});
+
+$('button.stop').on('click', function () {
+    $(document.body).removeClass('playing');
+    server.emit('stop');
+});

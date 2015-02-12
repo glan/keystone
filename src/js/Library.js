@@ -11,11 +11,16 @@ function Library(element, items) {
         document.body.style.cursor = '-webkit-grab';
     })
     .on('dragstart', 'li', function (event) {
+        var type = event.target.getAttribute('data-type'),
+            item = items.filter(function(i) {
+                return (i.name === type);
+            })[0];
         document.body.style.cursor = '-webkit-grabbing';
         event.originalEvent.dataTransfer.setData('application/json',
             JSON.stringify({
                 name: 'Unnamed',
-                type: event.target.getAttribute('data-type'),
+                type: type,
+                inputOp: item.inputOp,
                 offsetX: event.originalEvent.offsetX,
                 offsetY: event.originalEvent.offsetY
             })

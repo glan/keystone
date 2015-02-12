@@ -14,8 +14,9 @@ function Block(canvas, streams, data) {
     this._data.outputStreams = this._data.outputStreams || [];
 
     this._name = data.name;
-    this.args = data.args || {};
+    this.args = data.args || [];
     this.type = data.type;
+    this.inputOp = data.inputOp;
     this.id = data.id;
     this.x = data.x;
     this.y = data.y;
@@ -103,18 +104,13 @@ proto.pack = function pack() {
     return {
         name: this.name,
         type: this.type,
+        inputOp: this.inputOp,
         args: this.args,
-        x: this.x,
-        y: this.y,
+        x: Math.round(this.x),
+        y: Math.round(this.y),
         inputStreams: this.inputStreams
-            .filter(function (s) {
-                return (s.src);
-            })
             .map(function (s) { return s.id; }),
         outputStreams: this.outputStreams
-            .filter(function (s) {
-                return (s.dest);
-            })
             .map(function (s) { return s.id; })
     };
 };
@@ -157,6 +153,8 @@ proto.createStreams = function createStreams() {
     this.inputStreams = this._data.inputStreams.map(function (streamId, i) {
         var stream = this._streams.add(streamId);
         stream.dest = this;
+        // Unbind dest linkedHandle
+        stream.destHandle._linkedHandle = null;
         return stream;
     }.bind(this));
 
@@ -164,6 +162,10 @@ proto.createStreams = function createStreams() {
     this.outputStreams = this._data.outputStreams.map(function (streamId, i) {
         var stream = this._streams.add(streamId);
         stream.src = this;
+        // Bind dest linked handle to src handle
+        if (!stream.dest) {
+            stream.destHandle._linkedHandle = stream.srcHandle;
+        }
         return stream;
     }.bind(this));
 };
@@ -181,11 +183,16 @@ proto.remove = function remove() {
 };
 
 proto.set = function set(data) {
+    this.args = [];
     data.forEach(function (obj) {
         if (obj.name === 'name') {
             this.name = obj.value;
         } else {
-            this.args[obj.name] = obj.value;
+            if (obj.type === 'int') {
+                obj.value = parseInt(obj.value, 10);
+            }
+            console.log(obj.value);
+            this.args.push(obj.value);
         }
     }.bind(this));
     window.save();

@@ -38,11 +38,12 @@ proto.get = function get(id) {
     return this.blocks[id];
 };
 
-proto.add = function add(type, name, x, y) {
+proto.add = function add(type, name, inputOp, x, y) {
     var id = uuid();
     this.blocks[id] = new Block(this.canvas, this.streams, {
         id: id,
         name: name,
+        inputOp: inputOp,
         type: type,
         x: x,
         y: y

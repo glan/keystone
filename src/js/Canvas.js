@@ -76,8 +76,8 @@ proto.update = function update() {
         (this.x).toFixed(4) + "," +
         (this.y).toFixed(4)+")");
     window.localStorage.setItem('keystone-data-canvas-zoom', this.zoom);
-    window.localStorage.setItem('keystone-data-canvas-x', this.x);
-    window.localStorage.setItem('keystone-data-canvas-y', this.y);
+    window.localStorage.setItem('keystone-data-canvas-x', Math.round(this.x));
+    window.localStorage.setItem('keystone-data-canvas-y', Math.round(this.y));
     this.grid.attr({
         x: (-this.x + (this.x % gridSize) - gridSize) / this.zoom,
         y: (-this.y + (this.y % gridSize) - gridSize) / this.zoom

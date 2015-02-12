@@ -18,7 +18,15 @@ function Props(element, items) {
     });
 
     this.$element.on('keyup', 'input', function (event) {
-        this.selected.set(this.$element.find('form').serializeArray());
+        var data = [];
+        this.$element.find('form input').each(function (i, ele) {
+            data.push({
+                name: ele.name,
+                value: ele.value,
+                type: ele.getAttribute('data-type')
+            });
+        });
+        this.selected.set(data);
         event.stopPropagation();
     }.bind(this));
 
@@ -43,11 +51,11 @@ Object.defineProperties(proto, {
                 this.$element.html(template({
                     name: selection.name,
                     type: selection.type,
-                    args: typeArgs.map(function (arg) {
+                    args: typeArgs.map(function (arg, i) {
                         return {
                             name: arg.name,
                             type: arg.type,
-                            value: selection.args[arg.name]
+                            value: selection.args[i]
                         };
                     })
                 }));
