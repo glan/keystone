@@ -15,6 +15,17 @@
       }
     ]
   }, {
+    "name": "timer",
+    "args": [
+      {
+        "name": "dueTime",
+        "type": "int"
+      }, {
+        "name": "period",
+        "type": "int"
+      }
+    ]
+  }, {
     "name": "interval",
     "inputOp": "merge",
     "args": [
@@ -64,12 +75,30 @@
       }
     ]
   }, {
+    "name": "flatMap",
+    "inputOp": "merge",
+    "args": [
+      {
+        "name": "selector",
+        "type": "function"
+      }
+    ]
+  }, {
     "name": "take",
     "inputOp": "merge",
     "args": [
       {
         "name": "count",
         "type": "int"
+      }
+    ]
+  }, {
+    "name": "window",
+    "inputOp": "merge",
+    "args": [
+      {
+        "name": "selector",
+        "type": "function"
       }
     ]
   }
