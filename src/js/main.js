@@ -205,7 +205,7 @@ server.on('output', function(message) {
     if (props.selected) {
         json = JSON.parse(message);
         if (json[0] === props.selected.outputStreams[0].id) {
-            $('.console pre').append(message + '<br/>');
+            $('.console pre').append('[' + json[1] + '][' + props.selected.name + ']:' + JSON.stringify(json[2]) + '<br/>');
         }
     } else {
         $('.console pre').append(message + '<br/>');

@@ -42,7 +42,7 @@ proto.add = function add(type, name, inputOp, x, y) {
     var id = uuid();
     this.blocks[id] = new Block(this.canvas, this.streams, {
         id: id,
-        name: name,
+        name: name || id.substring(0,8),
         inputOp: inputOp,
         type: type,
         x: x,

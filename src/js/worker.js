@@ -16,13 +16,13 @@ function block(op, args, outputs, inputs, combine) {
             throw(new Error('invalid op "' + op + '"'));
         }
         // TODO look up arg types
-        if (op === 'map') {
-            outStream = inStream[op].call(inStream, function (x, i) {
+        if (op === 'map' || op === 'flatMap' || op === 'filter' || op === 'window') {
+            outStream = inStream[op].call(inStream, function () {
                 return eval(args[0]);
             });
         } else if (op === 'reduce') {
             // TODO args 1 type number or string
-            outStream = inStream[op].call(inStream, function (acc, x) {
+            outStream = inStream[op].call(inStream, function () {
                 return eval(args[0]);
             }, args[1]);
         } else {

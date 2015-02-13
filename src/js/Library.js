@@ -18,7 +18,6 @@ function Library(element, items) {
         document.body.style.cursor = '-webkit-grabbing';
         event.originalEvent.dataTransfer.setData('application/json',
             JSON.stringify({
-                name: 'Unnamed',
                 type: type,
                 inputOp: item.inputOp,
                 offsetX: event.originalEvent.offsetX,
