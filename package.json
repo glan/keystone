@@ -5,6 +5,7 @@
   "author": "Glan Thomas <glanthomas@mac.com>",
   "main": "./src/js/main.js",
   "scripts": {
+    "start": "node src/js/server/server.js",
     "test": "gulp test"
   },
   "browserify": {

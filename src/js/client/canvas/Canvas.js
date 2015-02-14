@@ -1,6 +1,6 @@
 'use strict';
 
-var template = require('../templates/canvas.hbs'),
+var template = require('./canvas.hbs'),
     EventEmitter = require('events').EventEmitter,
     $ = require('jquery'),
     d3 = require('d3');

@@ -14,7 +14,8 @@ function Stream(canvas, id) {
         "fill": "none",
         "stroke": "hsl(49,88.9401%,57.451%)",
         "stroke-width": "2",
-        "class": "flow"
+        "class": "flow",
+        "id": id
     });
     this.destHandle = new Handle(canvas.handleLayer, this, 'output');
     this.srcHandle = new Handle(canvas.handleLayer, this, 'input');

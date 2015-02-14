@@ -1,7 +1,7 @@
 'use strict';
 
 var $ = require('jquery'),
-    template = require('../templates/library.hbs');
+    template = require('./library.hbs');
 
 function Library(element, items) {
     var ele = $(element).append(template(items)),

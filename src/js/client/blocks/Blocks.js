@@ -1,7 +1,7 @@
 'use strict';
 
-var Block = require('./Block'),
-    Streams = require('./Streams'),
+var Block = require('./block/Block'),
+    Streams = require('./streams/Streams'),
     uuid = require('node-uuid').v4,
     EventEmitter = require('events').EventEmitter;
 

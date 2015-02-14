@@ -1,7 +1,7 @@
 'use strict';
 
 var d3 = require('d3'),
-    dragInstance = require('./drag');
+    dragInstance = require('../drag');
 
 function Handle(svg, stream, type, linkedHandle) {
     this.stream = stream;

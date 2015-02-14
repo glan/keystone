@@ -2,14 +2,13 @@
 
 var $ = require('jquery'),
     d3 = require('d3'),
-    defaultBlocks = require('../data/blocks'),
-    modules = require('../data/basic'),
-    Canvas = require('./Canvas'),
-    SidePanel = require('./SidePanel'),
-    Props = require('./Props'),
-    ConsoleTray = require('./Console'),
-    Library = require('./Library'),
-    Blocks = require('./Blocks'),
+    modules = require('../../data/basic'),
+    Canvas = require('./canvas/Canvas'),
+    SidePanel = require('./sidePanel/SidePanel'),
+    Props = require('./props/Props'),
+    ConsoleTray = require('./console/Console'),
+    Library = require('./library/Library'),
+    Blocks = require('./blocks/Blocks'),
     canvas = new Canvas($('body')),
     consoleTray = new ConsoleTray($('body')),
     sidePanel = new SidePanel($('body')),
@@ -28,10 +27,7 @@ window.load = function load() {
         data = JSON.parse(window.localStorage.getItem('keystone-data'));
     } catch (e) {
     }
-    if (!data) {
-        data = require('../data/blocks');
-    }
-    blocks = new Blocks(canvas, data);
+    blocks = new Blocks(canvas, data || {});
     canvas.resize();
 };
 
@@ -200,10 +196,10 @@ server.emit('init', 'xxxx');
 
 server.on('output', function(message) {
     $(document.body).addClass('playing');
-    var json,
+    var json = JSON.parse(message),
         ele = $('.console pre')[0];
+        document.getElementById(json[0]).classList.add('playing');
     if (props.selected) {
-        json = JSON.parse(message);
         if (json[0] === props.selected.outputStreams[0].id) {
             $('.console pre').append('[' + json[1] + '][' + props.selected.name + ']:' + JSON.stringify(json[2]) + '<br/>');
         }
@@ -213,11 +209,10 @@ server.on('output', function(message) {
     ele.scrollTop = ele.scrollHeight;
 });
 
-server.on('exit', function() {
-    $(document.body).removeClass('playing');
-});
 
-server.on('completed', function() {
+server.on('completed', function(message) {
+    var json = JSON.parse(message);
+    document.getElementById(json[0]).classList.remove('playing');
     $(document.body).removeClass('playing');
 });
 
@@ -229,20 +224,41 @@ server.on('error', function(message) {
 server.on('exit', function(message) {
     console.log('exit', message);
     $(document.body).removeClass('playing');
+    //console.log(d3.selectAll('path.flow'));
+    d3.selectAll('.streamLayer path.flow').classed('playing', false);
 });
 
 $('button.clear').on('click', function () {
     $('.console pre').html('');
 });
 
+var paused;
+
+$('button.pause').on('click', function () {
+    if (paused) {
+        paused = false;
+        this.innerHTML = 'Pause';
+        server.emit('play');
+
+    } else {
+        paused = true;
+        this.innerHTML = 'Continue';
+        server.emit('pause');
+    }
+});
+
 $('button.run').on('click', function () {
-    // if (props.selected) {
-        //server.emit('stop');
-        server.emit('upload', {
-            model: JSON.parse(window.localStorage.getItem('keystone-data')),
-            // outputStream: props.selected.outputStreams[0].id
-        });
-    // }
+    paused = false;
+    var data = {};
+    if (props.selected) {
+        data[props.selected.id] = props.selected.pack();
+    } else {
+        data = JSON.parse(window.localStorage.getItem('keystone-data'));
+    }
+    console.log(data);
+    server.emit('upload', {
+        model: data
+    });
 });
 
 $('button.stop').on('click', function () {

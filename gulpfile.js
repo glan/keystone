@@ -39,7 +39,7 @@ gulp.task('jshint', function () {
 // Browserify (dev) task =======================================================
 
 gulp.task('browserify-dev', function () {
-  return gulp.src('./src/js/main.js', {
+  return gulp.src('./src/js/client/main.js', {
       read: false
     })
     .pipe(browserify({
@@ -63,7 +63,7 @@ gulp.task('less-dev', function () {
 // Watch task ==================================================================
 
 gulp.task('watch', function () {
-  gulp.watch(['./src/**/*.js', './src/**/*.hbs', './src/**/*.json'], ['browserify-dev']);
+  gulp.watch(['./src/client/**/*.js', './src/**/*.hbs', './src/**/*.json'], ['browserify-dev']);
   gulp.watch('./src/**/*.less', ['less-dev']);
   gulp.watch(['./webapp/index.html', './webapp/dist/*.*'], ['reload']);
 });

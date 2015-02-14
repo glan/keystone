@@ -1,7 +1,7 @@
 'use strict';
 
 var $ = require('jquery'),
-    template = require('../templates/props.hbs');
+    template = require('./props.hbs');
 
 function Props(element, items) {
     this.$element = $(element).append('<div class="props"></div>').find('.props');

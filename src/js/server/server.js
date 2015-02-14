@@ -5,15 +5,17 @@ var child_process = require('child_process'),
 function newProcess (socket, id) {
 
     if (!childProcesses[id] || !childProcesses[id].connected) {
-        childProcesses[id] = child_process.fork('./worker');
+        childProcesses[id] = child_process.fork(require.resolve('./child'));
     }
 
     console.log(childProcesses[id].connected);
 
     childProcesses[id].on('message', function (message) {
         var json = JSON.parse(message);
+        //console.log(json[2]);
         if (json[2] === 'completed') {
-            socket.emit('completed');
+            console.log('completed');
+            socket.emit('completed', message);
         } else {
             //console.log(message);
             socket.emit('output', message);
@@ -33,6 +35,9 @@ function newProcess (socket, id) {
 }
 
 
+// var processor = require('./processor');
+
+
 io.on('connection', function (socket) {
     var child, id;
 
@@ -42,8 +47,21 @@ io.on('connection', function (socket) {
         child = newProcess(socket, id);
     });
     socket.on('upload', function (data) {
-        child = newProcess(socket, id);
+        // if child process is disconected, respawn
+        if (!child.connected) {
+            console.log('new process');
+            child = newProcess(socket, id);
+        }
         child.send(data);
+    });
+    socket.on('pause', function (data) {
+        // TODO add option to pause and play each module
+        console.log('pause');
+        child.send('pause');
+    });
+    socket.on('play', function (data) {
+        console.log('play');
+        child.send('play');
     });
     socket.on('stop', function() {
         if (child) {
@@ -52,6 +70,7 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('disconnect', function() {
+        // TODO remove current socket listiners from child process
         // if (child) {
         //     child.removeAllListeners('message');
         //     child.removeAllListeners('error');

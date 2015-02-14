@@ -3,7 +3,7 @@
 var d3 = require('d3'),
     $ = require('jquery'),
     uuid = require('node-uuid').v4,
-    drag = require('./drag');
+    drag = require('../drag');
 
 
 function Block(canvas, streams, data) {

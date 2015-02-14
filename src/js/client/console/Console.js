@@ -3,7 +3,7 @@
 var $ = require('jquery'),
     d3 = require('d3'),
     EventEmitter = require('events').EventEmitter,
-    template = require('../templates/console.hbs');
+    template = require('./console.hbs');
 
 function Console(element) {
     EventEmitter.call(this);
