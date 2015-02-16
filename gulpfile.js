@@ -63,7 +63,7 @@ gulp.task('less-dev', function () {
 // Watch task ==================================================================
 
 gulp.task('watch', function () {
-  gulp.watch(['./src/client/**/*.js', './src/**/*.hbs', './src/**/*.json'], ['browserify-dev']);
+  gulp.watch(['./src/js/client/**/*.js', './src/**/*.hbs', './src/**/*.json'], ['browserify-dev']);
   gulp.watch('./src/**/*.less', ['less-dev']);
   gulp.watch(['./webapp/index.html', './webapp/dist/*.*'], ['reload']);
 });
