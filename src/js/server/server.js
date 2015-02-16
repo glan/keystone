@@ -12,9 +12,7 @@ function newProcess (socket, id) {
 
     childProcesses[id].on('message', function (message) {
         var json = JSON.parse(message);
-        //console.log(json[2]);
         if (json[2] === 'completed') {
-            console.log('completed');
             socket.emit('completed', message);
         } else {
             //console.log(message);

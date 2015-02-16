@@ -5,7 +5,7 @@ var Rx = require('rx');
 function Processor() {
     this.streams = {};
     this.subscriptions = {};
-    // TODO add pausers to all blocks
+    this.pausers = {};
     this.pauser = new Rx.Subject();
 }
 
@@ -41,30 +41,32 @@ proto._createOpStream = function _createOpStream(inStream, op, args) {
 };
 
 
-proto.addBlock = function addBlock(op, args, outputs, inputs, combine) {
-    var opFunction, outStream, inStream;
-
+proto.addBlock = function addBlock(blockId, model) {
+    var combine, inStream, outStream, opFunction;
     // Create input stream
-    combine = (combine === 'concat') ? 'concat' : 'merge';
-    inStream = Rx.Observable[combine](inputs.map(function (id) {
+    combine = (model.inputOp === 'concat') ? 'concat' : 'merge';
+    inStream = Rx.Observable[combine](model.inputStreams.map(function (id) {
         // get selected input stream or create new stream if it does not exist
         this.streams[id] = this.streams[id] || new Rx.Subject();
         return this.streams[id];
     }.bind(this)));
 
     // Create opFunction stream
-    opFunction = this._createOpStream(inStream, op, args);
+    opFunction = this._createOpStream(inStream, model.type, model.args);
 
     // Add pauser
     // TODO create per block pauser
-    outStream = opFunction.pausable(this.pauser);
+    this.pausers[blockId] = new Rx.Subject();
+    this.pauser.subscribe(this.pausers[blockId]);
+    outStream = opFunction.pausable(this.pausers[blockId]);
 
     // Subscribe output streams
-    outputs.forEach(function (id) {
+    model.outputStreams.forEach(function (id) {
         // create new output stream if it does not exist
         if (!this.streams[id]) {
             this.streams[id] = new Rx.Subject();
         }
+        // TODO remove all previous subscriptions first
         // remove any previous subscriptions
         if (this.subscriptions[id]) {
             this.subscriptions[id].dispose();
@@ -72,5 +74,11 @@ proto.addBlock = function addBlock(op, args, outputs, inputs, combine) {
         this.subscriptions[id] = outStream.subscribe(this.streams[id]);
     }.bind(this));
 };
+
+proto.removeBlock = function (blockId, model) {
+    // TODO
+    // remove input and output streams
+    // remove pauser
+}
 
 module.exports = Processor;

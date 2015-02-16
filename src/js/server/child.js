@@ -6,6 +6,12 @@ var Processor = require('./Processor'),
 
 process.on('message', function (data) {
 
+    // Message API
+    // - pause [streamId]
+    // - continue [streamId]
+    // - addBlock(id, model)
+    // - removeBlock(id, model)
+
     if (data) {
         if (data === 'pause') {
             processor.pauser.onNext(false);
@@ -14,8 +20,7 @@ process.on('message', function (data) {
         } else {
             // load model
             Object.keys(data.model).forEach(function (key) {
-                var b = data.model[key];
-                processor.addBlock(b.type, b.args, b.outputStreams, b.inputStreams, b.inputOp);
+                processor.addBlock(key, data.model[key]);
             });
 
 
@@ -30,6 +35,7 @@ process.on('message', function (data) {
                     // message back
                     subscriptions[s] = processor.streams[s].subscribe(
                         function (x) {
+                            // TODO timestamps should be provided by the processor
                             process.send(JSON.stringify([s, Date.now(), x]));
                         },
                         function (err) {
