@@ -1,80 +1,99 @@
 var child_process = require('child_process'),
     io = require('socket.io').listen(8080),
-    childProcesses = {};
+    Rx = require('rx'),
+    childProcesses = {},
+    processObservers = {},
+    processSubscriptions = {};
 
-function newProcess (socket, id) {
+function newProcess (id) {
+
+    var processObserver;
+
+    processObservers[id] = processObservers[id] || new Rx.Subject();
 
     if (!childProcesses[id] || !childProcesses[id].connected) {
         childProcesses[id] = child_process.fork(require.resolve('./child'));
+
+        processObserver = Rx.Observable.create(function (observer) {
+            childProcesses[id].on('message', observer.onNext.bind(observer));
+            childProcesses[id].on('error', observer.onError.bind(observer));
+            childProcesses[id].on('exit', observer.onCompleted.bind(observer));
+            return function () {
+                // clean up, do kill here?
+                childProcesses[id].kill();
+                console.log('disposed');
+            };
+        });
+        processSubscriptions[id] = processObserver.subscribe(processObservers[id]);
     }
-
-    console.log(childProcesses[id].connected);
-
-    childProcesses[id].on('message', function (message) {
-        var json = JSON.parse(message);
-        if (json[2] === 'completed') {
-            socket.emit('completed', message);
-        } else {
-            //console.log(message);
-            socket.emit('output', message);
-        }
-    });
-
-    childProcesses[id].on('error', function (message) {
-        socket.emit('error', message);
-    });
-
-    childProcesses[id].on('exit', function (code) {
-        console.log('exit');
-        socket.emit('exit', code);
-    });
-
-    return childProcesses[id];
 }
 
 
-// var processor = require('./processor');
-
-
 io.on('connection', function (socket) {
-    var child, id;
+
+    var sessionId,
+        filter,
+        clientSubscription;
 
     socket.on('init', function (data) {
-        console.log('connect');
-        id = data;
-        child = newProcess(socket, id);
+        console.log(socket.id, 'connected');
+        sessionId = data;
+        newProcess(sessionId);
+
+        // bind to processObserver
+        clientSubscription = processObservers[sessionId].subscribe(
+            function (m) {
+                // option to filter messages on the server
+                // note using this stops the all nodes on the UI from animating on play
+                // var j = JSON.parse(m);
+                // if (j[0] === filter) {
+                    socket.emit('output', m);
+                // }
+            },
+            function (m) {
+                socket.emit('error', m);
+            },
+            function (m) {
+                socket.emit('exit', m);
+            }
+        );
+    });
+    socket.on('filter', function (data) {
+        console.log(socket.id, 'filter', data);
+        filter = data;
     });
     socket.on('upload', function (data) {
+        console.log(socket.id, 'upload');
         // if child process is disconected, respawn
-        if (!child.connected) {
-            console.log('new process');
-            child = newProcess(socket, id);
+        if (!childProcesses[sessionId] || !childProcesses[sessionId].connected) {
+            console.log(socket.id, 'new process');
+            newProcess(sessionId);
         }
-        child.send(data);
+        childProcesses[sessionId].send(data);
     });
     socket.on('pause', function (data) {
         // TODO add option to pause and play each module
-        console.log('pause');
-        child.send('pause');
+        console.log(socket.id, 'pause');
+        childProcesses[sessionId].send('pause');
     });
     socket.on('play', function (data) {
-        console.log('play');
-        child.send('play');
+        console.log(socket.id, 'play');
+        childProcesses[sessionId].send('play');
     });
     socket.on('stop', function() {
-        if (child) {
-            console.log('stop');
-            child.kill();
+        if (childProcesses[sessionId]) {
+            console.log(socket.id, 'stop');
+            // moved kill to processSubscription dispose
+            // childProcesses[sessionId].kill();
+            // remove observers
+            processSubscriptions[sessionId].dispose();
         }
     });
     socket.on('disconnect', function() {
-        // TODO remove current socket listiners from child process
-        // if (child) {
-        //     child.removeAllListeners('message');
-        //     child.removeAllListeners('error');
-        //     child.removeAllListeners('exit');
-        // }
-        //console.log('exit');
-        //child.kill();
+        console.log(socket.id, 'disconnect');
+        // remove current socket listiners from child process
+        if (clientSubscription) {
+            clientSubscription.dispose();
+        }
     });
 });
