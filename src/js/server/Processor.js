@@ -6,6 +6,7 @@ function Processor() {
     this.streams = {};
     this.subscriptions = {};
     this.pausers = {};
+    // TODO remove pauser
     this.pauser = new Rx.Subject();
 }
 
@@ -56,8 +57,10 @@ proto.addBlock = function addBlock(blockId, model) {
 
     // Add pauser
     // TODO create per block pauser
-    this.pausers[blockId] = new Rx.Subject();
-    this.pauser.subscribe(this.pausers[blockId]);
+    this.pausers[blockId] = this.pausers[blockId] || new Rx.Subject();
+
+    // TODO remove global pauser
+    //this.pauser.subscribe(this.pausers[blockId]);
     outStream = opFunction.pausable(this.pausers[blockId]);
 
     // Subscribe output streams
@@ -73,6 +76,8 @@ proto.addBlock = function addBlock(blockId, model) {
         }
         this.subscriptions[id] = outStream.subscribe(this.streams[id]);
     }.bind(this));
+
+    this.pausers[blockId].onNext(!model.paused);
 };
 
 proto.removeBlock = function (blockId, model) {

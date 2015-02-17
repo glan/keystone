@@ -69,16 +69,25 @@ io.on('connection', function (socket) {
             console.log(socket.id, 'new process');
             newProcess(sessionId);
         }
-        childProcesses[sessionId].send(data);
+        childProcesses[sessionId].send({
+            action: 'upload',
+            data: data
+        });
     });
     socket.on('pause', function (data) {
         // TODO add option to pause and play each module
         console.log(socket.id, 'pause');
-        childProcesses[sessionId].send('pause');
+        childProcesses[sessionId].send({
+            action: 'pause',
+            data: data
+        });
     });
     socket.on('play', function (data) {
         console.log(socket.id, 'play');
-        childProcesses[sessionId].send('play');
+        childProcesses[sessionId].send({
+            action: 'play',
+            data: data
+        });
     });
     socket.on('stop', function() {
         if (childProcesses[sessionId]) {
