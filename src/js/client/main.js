@@ -51,6 +51,7 @@ $('#main-canvas').on('dragover', function (event) {
 });
 
 function selectBlock(id) {
+    // TODO send filter message to server
     if (props.selected) {
         props.selected.element.classed('active', false);
     }
@@ -58,9 +59,11 @@ function selectBlock(id) {
         // activate block
         props.selected = blocks.get(id);
         props.selected.element.classed('active', true);
+        server.emit('filter', props.selected.outputStreams[0].id);
     } else {
         // deactivate block
         props.selected = null;
+        server.emit('filter', '');
     }
 }
 
@@ -192,46 +195,63 @@ var io = require('socket.io-client');
 
 var server = io.connect('http://localhost:8080');
 
-server.emit('init', 'xxxx');
-
-server.on('output', function(message) {
-    $(document.body).addClass('playing');
-    var json = JSON.parse(message),
-        ele = $('.console pre')[0];
-        document.getElementById(json[0]).classList.add('playing');
+function consoleLog(json) {
+    var ele = $('.console pre')[0];
     if (props.selected) {
         if (json[0] === props.selected.outputStreams[0].id) {
             $('.console pre').append('[' + json[1] + '][' + props.selected.name + ']:' + JSON.stringify(json[2]) + '<br/>');
         }
     } else {
-        $('.console pre').append(message + '<br/>');
+        $('.console pre').append(JSON.stringify(json) + '<br/>');
     }
     ele.scrollTop = ele.scrollHeight;
+}
+
+// Handshake
+server.on('connect', function () {
+    // send session Id
+    server.emit('init', 'xxxx');
 });
 
+var streamTimeouts = {};
 
-server.on('completed', function(message) {
-    var json = JSON.parse(message);
-    document.getElementById(json[0]).classList.remove('playing');
-    $(document.body).removeClass('playing');
+server.on('output', function(message) {
+    var json = JSON.parse(message),
+        streamId = json[0];
+    if (json[2] === 'completed') {
+        document.getElementById(json[0]).classList.remove('playing');
+        $(document.body).removeClass('playing');
+    } else {
+        $(document.body).addClass('playing');
+        document.getElementById(streamId).classList.add('playing');
+        window.clearTimeout(streamTimeouts[streamId]);
+        streamTimeouts[streamId] = window.setTimeout(function () {
+            document.getElementById(streamId).classList.remove('playing');
+        }, 1000);
+    }
+    consoleLog(json);
 });
 
 server.on('error', function(message) {
-    console.log('error', message);
+    var json = JSON.parse(message);
+    document.getElementById(json[0]).classList.remove('playing');
     $(document.body).removeClass('playing');
+    consoleLog(json);
 });
 
 server.on('exit', function(message) {
     console.log('exit', message);
     $(document.body).removeClass('playing');
-    //console.log(d3.selectAll('path.flow'));
     d3.selectAll('.streamLayer path.flow').classed('playing', false);
+    consoleLog(json);
 });
 
 $('button.clear').on('click', function () {
     $('.console pre').html('');
 });
 
+// TODO remove pause and play messages
+// these can now be done at a block level
 var paused;
 
 $('button.pause').on('click', function () {
@@ -239,7 +259,6 @@ $('button.pause').on('click', function () {
         paused = false;
         this.innerHTML = 'Pause';
         server.emit('play');
-
     } else {
         paused = true;
         this.innerHTML = 'Continue';
@@ -255,7 +274,7 @@ $('button.run').on('click', function () {
     } else {
         data = JSON.parse(window.localStorage.getItem('keystone-data'));
     }
-    console.log(data);
+    //console.log(data);
     server.emit('upload', {
         model: data
     });

@@ -4,6 +4,8 @@
 <form class="block-conf">
   <label for="bc-name">Name</label>
   <input type="text" id="bc-name" name="name" value="{{name}}" />
+  <label for="bc-paused">Paused</label>
+  <input type="checkbox" id="bc-paused" name="paused" {{#paused}}checked="checked"{{/paused}} />
   <fieldset>
     <legend>Arguments ({{type}})</legend>
     <ul>

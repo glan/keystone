@@ -9,17 +9,13 @@ function Props(element, items) {
 
     this.width = this.$element.width();
 
-    this.$element.on('submit', function () {
-        return false;
-    });
-
     this.$element.on('keydown', 'input', function (event) {
         event.stopPropagation();
     });
 
     this.$element.on('keyup', 'input', function (event) {
         var data = [];
-        this.$element.find('form input').each(function (i, ele) {
+        this.$element.find('form input[type=text]').each(function (i, ele) {
             data.push({
                 name: ele.name,
                 value: ele.value,
@@ -27,6 +23,14 @@ function Props(element, items) {
             });
         });
         this.selected.set(data);
+        event.stopPropagation();
+    }.bind(this));
+
+    this.$element.on('click', 'input[type=checkbox]', function (event) {
+        var ele = event.target;
+        this.selected.paused = ele.checked;
+        // TODO move save state to Block object
+        window.save();
         event.stopPropagation();
     }.bind(this));
 
@@ -51,6 +55,7 @@ Object.defineProperties(proto, {
                 this.$element.html(template({
                     name: selection.name,
                     type: selection.type,
+                    paused: selection.paused,
                     args: typeArgs.map(function (arg, i) {
                         return {
                             name: arg.name,

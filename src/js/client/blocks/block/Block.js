@@ -20,6 +20,7 @@ function Block(canvas, streams, data) {
     this.id = data.id;
     this.x = data.x;
     this.y = data.y;
+    this.paused = data.paused;
 
     // create streams
     this.createStreams();
@@ -106,6 +107,7 @@ proto.pack = function pack() {
         type: this.type,
         inputOp: this.inputOp,
         args: this.args,
+        paused: this.paused,
         x: Math.round(this.x),
         y: Math.round(this.y),
         inputStreams: this.inputStreams
@@ -191,7 +193,6 @@ proto.set = function set(data) {
             if (obj.type === 'int') {
                 obj.value = parseInt(obj.value, 10);
             }
-            console.log(obj.value);
             this.args.push(obj.value);
         }
     }.bind(this));
