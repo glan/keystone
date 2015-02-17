@@ -192,6 +192,12 @@ proto.set = function set(data) {
         } else {
             if (obj.type === 'int') {
                 obj.value = parseInt(obj.value, 10);
+                if (obj.min !== '') {
+                    obj.value = (obj.value > +obj.min) ? obj.value : +obj.min;
+                }
+                if (obj.max !== '') {
+                    obj.value = (obj.value < +obj.max) ? obj.value : +obj.max;
+                }
             }
             this.args.push(obj.value);
         }

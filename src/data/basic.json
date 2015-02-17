@@ -22,7 +22,8 @@
         "type": "int"
       }, {
         "name": "period",
-        "type": "int"
+        "type": "int",
+        "min": 50
       }
     ]
   }, {
@@ -31,7 +32,8 @@
     "args": [
       {
         "name": "ms",
-        "type": "int"
+        "type": "int",
+        "min": 50
       }
     ]
   }, {
@@ -40,7 +42,8 @@
     "args": [
       {
         "name": "ms",
-        "type": "int"
+        "type": "int",
+        "min": 0
       }
     ]
   }, {

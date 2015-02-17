@@ -19,7 +19,11 @@ function Props(element, items) {
             data.push({
                 name: ele.name,
                 value: ele.value,
-                type: ele.getAttribute('data-type')
+                // TODO type and range info should not be passed into the UI and then used later
+                // for checking
+                type: ele.getAttribute('data-type'),
+                min: ele.getAttribute('data-min'),
+                max: ele.getAttribute('data-max')
             });
         });
         this.selected.set(data);
@@ -60,7 +64,9 @@ Object.defineProperties(proto, {
                         return {
                             name: arg.name,
                             type: arg.type,
-                            value: selection.args[i]
+                            value: selection.args[i],
+                            min: arg.min,
+                            max: arg.max
                         };
                     })
                 }));

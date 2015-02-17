@@ -12,7 +12,9 @@
     {{#each args}}
       <li>
         <label for="bc-{{name}}">{{name}}</label>
-        <input type="text" id="bc-{{name}}" name="{{name}}" value="{{value}}" data-type="{{type}}" />
+        <input type="text" id="bc-{{name}}" name="{{name}}"
+          value="{{value}}" data-type="{{type}}"
+          data-max="{{max}}" data-min="{{min}}" />
       </li>
       {{/each}}
     </ul>
