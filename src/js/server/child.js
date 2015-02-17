@@ -15,20 +15,20 @@ process.on('message', function (message) {
     switch(message.action) {
     // TODO remove pause and play messages
     // these can now be done at a block level
-    case 'pause':
-        if (message.data) {
-            processor.pausers[message.data].onNext(false);
-        } else {
-            processor.pauser.onNext(false);
-        }
-        break;
-    case 'play':
-        if (message.data) {
-            processor.pausers[message.data].onNext(true);
-        } else {
-            processor.pauser.onNext(true);
-        }
-        break;
+    // case 'pause':
+    //     if (message.data) {
+    //         processor.pausers[message.data].onNext(false);
+    //     } else {
+    //         processor.pauser.onNext(false);
+    //     }
+    //     break;
+    // case 'play':
+    //     if (message.data) {
+    //         processor.pausers[message.data].onNext(true);
+    //     } else {
+    //         processor.pauser.onNext(true);
+    //     }
+    //     break;
     case 'upload':
         // load model
         Object.keys(message.data.model).forEach(function (key) {

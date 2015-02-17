@@ -7,7 +7,7 @@ function Processor() {
     this.subscriptions = {};
     this.pausers = {};
     // TODO remove pauser
-    this.pauser = new Rx.Subject();
+    //this.pauser = new Rx.Subject();
 }
 
 var proto = Processor.prototype;

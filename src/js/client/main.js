@@ -252,22 +252,22 @@ $('button.clear').on('click', function () {
 
 // TODO remove pause and play messages
 // these can now be done at a block level
-var paused;
-
-$('button.pause').on('click', function () {
-    if (paused) {
-        paused = false;
-        this.innerHTML = 'Pause';
-        server.emit('play');
-    } else {
-        paused = true;
-        this.innerHTML = 'Continue';
-        server.emit('pause');
-    }
-});
+// var paused;
+//
+// $('button.pause').on('click', function () {
+//     if (paused) {
+//         paused = false;
+//         this.innerHTML = 'Pause';
+//         server.emit('play', props.selected.id);
+//     } else {
+//         paused = true;
+//         this.innerHTML = 'Continue';
+//         server.emit('pause', props.selected.id);
+//     }
+// });
 
 $('button.run').on('click', function () {
-    paused = false;
+    //paused = false;
     var data = {};
     if (props.selected) {
         data[props.selected.id] = props.selected.pack();

@@ -74,21 +74,23 @@ io.on('connection', function (socket) {
             data: data
         });
     });
-    socket.on('pause', function (data) {
-        // TODO add option to pause and play each module
-        console.log(socket.id, 'pause');
-        childProcesses[sessionId].send({
-            action: 'pause',
-            data: data
-        });
-    });
-    socket.on('play', function (data) {
-        console.log(socket.id, 'play');
-        childProcesses[sessionId].send({
-            action: 'play',
-            data: data
-        });
-    });
+    // TODO remove pause and play messages
+    // these can now be done at a block level
+    // socket.on('pause', function (data) {
+    //     // TODO add option to pause and play each module
+    //     console.log(socket.id, 'pause');
+    //     childProcesses[sessionId].send({
+    //         action: 'pause',
+    //         data: data
+    //     });
+    // });
+    // socket.on('play', function (data) {
+    //     console.log(socket.id, 'play');
+    //     childProcesses[sessionId].send({
+    //         action: 'play',
+    //         data: data
+    //     });
+    // });
     socket.on('stop', function() {
         if (childProcesses[sessionId]) {
             console.log(socket.id, 'stop');
