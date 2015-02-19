@@ -23,7 +23,8 @@
       }, {
         "name": "period",
         "type": "int",
-        "min": 50
+        "min": 50,
+        "units": "ms"
       }
     ]
   }, {
@@ -31,9 +32,10 @@
     "inputOp": "merge",
     "args": [
       {
-        "name": "ms",
+        "name": "interval",
         "type": "int",
-        "min": 50
+        "min": 50,
+        "units": "ms"
       }
     ]
   }, {
@@ -41,9 +43,10 @@
     "inputOp": "merge",
     "args": [
       {
-        "name": "ms",
+        "name": "delay",
         "type": "int",
-        "min": 0
+        "min": 0,
+        "units": "ms"
       }
     ]
   }, {

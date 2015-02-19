@@ -66,7 +66,8 @@ Object.defineProperties(proto, {
                             type: arg.type,
                             value: selection.args[i],
                             min: arg.min,
-                            max: arg.max
+                            max: arg.max,
+                            units: arg.units
                         };
                     })
                 }));
